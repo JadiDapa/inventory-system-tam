@@ -1,3 +1,11 @@
+import Expertise from "@/components/Home/Expertise";
+import Hero from "@/components/Home/Hero";
+
 export default function Home() {
-  return <h1>Hello World</h1>;
+  return (
+    <>
+      <Hero />
+      <Expertise />
+    </>
+  );
 }
