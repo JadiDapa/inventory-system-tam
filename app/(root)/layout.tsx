@@ -1,21 +1,21 @@
-import { ReactNode } from "react";
+import Navbar from "@/components/Home/Navbar";
+import Sidebar from "@/components/Home/Sidebar";
+import React, { ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
 };
-
 export default function RootLayout({ children }: Props) {
   return (
-    <section className="font-jakarta relative min-h-screen w-full overflow-hidden">
-      <div className="absolute left-0 top-0 -z-10 h-full w-full">
-        <div className="mx-6 grid h-full grid-cols-4 lg:mx-20">
-          <div className="border-l" />
-          <div className="border-l" />
-          <div className="border-l" />
-          <div className="border-l" />
-        </div>
+    <section className="flex min-h-screen w-full overflow-hidden bg-primary/5 lg:gap-12">
+      <div>
+        <Sidebar />
       </div>
-      <div className="z-10">{children}</div>
+
+      <main className="w-full lg:ml-[240px]">
+        <Navbar />
+        <div className="px-4 py-3 lg:px-6">{children}</div>
+      </main>
     </section>
   );
 }
