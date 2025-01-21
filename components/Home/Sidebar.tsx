@@ -4,20 +4,12 @@ import { Accordion } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import {
-  Box,
-  ChevronRight,
-  House,
-  LogOut,
-  Ticket,
-  UsersRound,
-  X,
-} from "lucide-react";
+import useSidebarStore from "@/stores/SidebarStore";
+import { Boxes, Cctv, House, LogOut, Tag, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
 import { toast } from "sonner";
 
 const userLink = [
@@ -27,24 +19,25 @@ const userLink = [
     Icon: House,
   },
   {
+    name: "Brands",
+    url: "/brands",
+    Icon: Tag,
+  },
+  {
     name: "Products",
     url: "/products",
-    Icon: Box,
+    Icon: Cctv,
   },
   {
-    name: "Activity",
-    url: "/activity",
-    Icon: UsersRound,
-  },
-  {
-    name: "Distributions",
-    url: "/distributions",
-    Icon: Ticket,
+    name: "Items",
+    url: "/items",
+    Icon: Boxes,
   },
 ];
 
 export default function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isSidebarOpen, closeSidebar } = useSidebarStore();
+
   const pathname = usePathname();
 
   const router = useRouter();
@@ -59,8 +52,8 @@ export default function Sidebar() {
     <>
       <aside
         className={cn(
-          "box-shadow bg-tertiary fixed z-50 min-h-screen w-[280px] space-y-4 overflow-hidden px-4 py-7 shadow-sm transition-all duration-500",
-          isOpen ? "translate-x-0" : "max-lg:-translate-x-full",
+          "box-shadow fixed z-50 min-h-screen w-[280px] space-y-4 overflow-hidden bg-tertiary px-4 py-7 shadow-sm transition-all duration-500",
+          isSidebarOpen ? "translate-x-0" : "max-lg:-translate-x-full",
         )}
       >
         <div className="flex w-full items-center gap-4 px-5">
@@ -81,9 +74,9 @@ export default function Sidebar() {
           </Link>
 
           <X
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={closeSidebar}
             className="text-primary lg:hidden"
-            size={24}
+            size={32}
             strokeWidth={1.8}
           />
         </div>
@@ -95,14 +88,14 @@ export default function Sidebar() {
             {userLink.map((item) => (
               <div key={item.url}>
                 <Link
-                  onClick={() => setIsOpen(false)}
+                  onClick={closeSidebar}
                   key={item.url}
                   href={item.url}
                   className={cn(
-                    "mt-1 flex w-full items-center justify-between rounded-md px-5 py-2.5 text-primary duration-300",
+                    "mt-1 flex w-full items-center justify-between rounded-lg px-5 py-2.5 text-primary duration-300",
                     pathname === item.url
-                      ? "text-tertiary bg-primary shadow-sm"
-                      : "hover:text-tertiary hover:bg-primary",
+                      ? "bg-primary text-tertiary shadow-sm"
+                      : "hover:bg-primary hover:text-tertiary",
                   )}
                 >
                   <div className="flex items-center justify-center gap-5">
@@ -113,32 +106,22 @@ export default function Sidebar() {
               </div>
             ))}
 
-            <div>
+            <div
+              className={cn(
+                "mt-1 flex h-full w-full cursor-pointer items-center px-5 py-2.5 text-primary duration-300",
+              )}
+            >
               <div
-                className={cn(
-                  "mt-1 flex w-full cursor-pointer items-center justify-between px-5 py-2.5 text-primary duration-300",
-                )}
+                onClick={handleLogout}
+                className={`"justify-center flex cursor-pointer items-center gap-5`}
               >
-                <div
-                  onClick={handleLogout}
-                  className={`"justify-center flex cursor-pointer items-center gap-5`}
-                >
-                  <LogOut strokeWidth={1.8} size={24} />
-                  <div className="text-xl">Log Out</div>
-                </div>
+                <LogOut strokeWidth={1.8} size={24} />
+                <div className="text-xl">Log Out</div>
               </div>
             </div>
           </Accordion>
         </ScrollArea>
       </aside>
-      {!isOpen && (
-        <div
-          onClick={() => setIsOpen(!isOpen)}
-          className="fixed top-4 z-50 grid size-8 place-items-center rounded-e-lg bg-primary text-primary lg:hidden"
-        >
-          <ChevronRight size={24} strokeWidth={1.8} />
-        </div>
-      )}
     </>
   );
 }

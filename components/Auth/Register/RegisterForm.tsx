@@ -15,9 +15,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
-import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { FadeLoader } from "react-spinners";
+import { createUser } from "@/lib/networks/user";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CreateUserType } from "@/lib/types/user";
+import { AxiosError } from "axios";
 
 const registerSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -25,10 +28,15 @@ const registerSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+interface ErrorResponse {
+  error: string;
+}
+
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+  const query = useQueryClient();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -39,28 +47,33 @@ export default function RegisterForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof registerSchema>) {
-    const { username, password } = values;
-    try {
-      setIsLoading(true);
-      const response = await signIn("credentials", {
-        username,
-        password,
-        redirect: false,
-      });
-      if (response?.error) {
-        toast.error("Invalid Email or Password!");
-      } else {
-        toast.success("Account Created Successfully!");
-        router.push("/dashboard");
-      }
-    } catch (error) {
+  const { mutate: onCreateUser } = useMutation({
+    mutationFn: (values: CreateUserType) => createUser(values),
+    onSuccess: () => {
+      query.invalidateQueries({ queryKey: ["users"] });
+      toast.success("Akun Berhasil Terdaftar!");
+      router.push("/login");
+    },
+    onError: (error: AxiosError<ErrorResponse>) => {
       console.log(error);
-      toast.error("TSomething Went Wrong!");
-    } finally {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Terjadi Kessalahan Pada Server!");
+      }
+    },
+    onMutate: () => {
+      setIsLoading(true);
+    },
+    onSettled: () => {
       setIsLoading(false);
-    }
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof registerSchema>) {
+    onCreateUser(values);
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 w-full">
@@ -78,6 +91,7 @@ export default function RegisterForm() {
                   <Input
                     className="h-12 w-full border-slate-800 ps-12"
                     placeholder="Username"
+                    type="text"
                     {...field}
                   />
                 </FormControl>

@@ -37,12 +37,12 @@ export default function SearchDialog() {
   );
 
   return (
-    <div className="flex h-[44px] w-80 items-center gap-4 rounded-md bg-white px-4">
-      <div className="flex size-5 items-center justify-center rounded-full duration-300 hover:bg-gray-200">
-        <Search strokeWidth={1.5} />
+    <div className="flex items-center gap-4 rounded-lg lg:h-[44px] lg:w-80 lg:bg-white lg:px-4">
+      <div className="items-center justify-center rounded-full duration-300 hover:bg-gray-200">
+        <Search strokeWidth={1.5} size={28} />
       </div>
       <Dialog>
-        <DialogTrigger className="w-full text-start text-gray-400">
+        <DialogTrigger className="hidden w-full text-start text-gray-400 lg:block">
           Search
         </DialogTrigger>
         <DialogContent className="flex flex-col px-0 pb-0 pt-4 lg:w-[660px]">

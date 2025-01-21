@@ -1,5 +1,4 @@
-import { BrandType } from "./brand";
-import { TypeType } from "./type";
+import { ItemType } from "./item";
 
 export interface ProductType {
   id: string;
@@ -7,17 +6,15 @@ export interface ProductType {
   slug: string;
   image?: string;
   detail?: string;
-  brandId: string;
-  Brand: BrandType;
+  brandSlug: string;
   createdAt: Date;
   updatedAt: Date;
-  Type: TypeType[];
+  Item: ItemType[];
 }
 
 export interface CreateProductType {
   name: string;
   slug: string;
   image?: string | File;
-  brandId: string;
   detail?: string;
 }

@@ -17,7 +17,6 @@ export async function createProduct(values: CreateProductType) {
   formData.append("name", values.name);
   formData.append("slug", values.slug);
   formData.append("detail", values.detail || "");
-  formData.append("brandId", values.brandId);
   formData.append("image", values.image as string);
 
   const { data } = await axiosInstance.post("/products", formData, {
@@ -34,7 +33,6 @@ export async function updateProduct(id: string, values: CreateProductType) {
   formData.append("name", values.name);
   formData.append("slug", values.slug);
   formData.append("detail", values.detail || "");
-  formData.append("brandId", values.brandId);
   formData.append("image", values.image as string);
 
   const { data } = await axiosInstance.put("/products/" + id, formData, {

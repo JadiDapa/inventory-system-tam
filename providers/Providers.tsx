@@ -16,7 +16,7 @@ export default function Providers({ children }: Props) {
       <SessionProvider>{children}</SessionProvider>
       <ProgressBar
         height="4px"
-        color="#653614"
+        color="#00467f"
         options={{ showSpinner: false }}
         shallowRouting
       />

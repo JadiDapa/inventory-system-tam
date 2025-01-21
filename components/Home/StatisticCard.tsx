@@ -15,7 +15,7 @@ export default function StatisticCard({
   image,
 }: StatisticCardProps) {
   return (
-    <div className="bg-tertiary flex h-28 w-full items-center gap-3 rounded-xl p-4 shadow-sm">
+    <div className="bg-tertiary flex h-28 w-full items-center gap-3 rounded-xl p-6 shadow-sm">
       <div className="grid size-14 place-items-center rounded-full bg-primary">
         {Icon && <Icon size={28} className="text-tertiary" />}
       </div>

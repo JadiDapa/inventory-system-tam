@@ -37,7 +37,7 @@ export async function updateBrand(id: string, values: CreateBrandType) {
 
   const { data } = await axiosInstance.put("/brands/" + id, formData, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "multi /form-data",
     },
   });
 
