@@ -5,28 +5,31 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { deleteBrand, getBrandBySlug } from "@/lib/networks/brand";
-import SelectedBrandItems from "@/components/Home/brands/SelectedBrandItems";
 import DeleteDialog from "@/components/Home/DeleteDialog";
-import UpdateBrandModal from "@/components/Home/brands/UpdateBrandModal";
+import UpdateProductModal from "@/components/Home/products/UpdateProductModal";
+import { deleteProduct, getProductBySlug } from "@/lib/networks/product";
+import SelectedProductItems from "@/components/Home/products/SelectedProductItems";
 
-export default function BrandDetail() {
+export default function ProductDetail() {
   const { slug } = useParams();
 
-  const { data: brand } = useQuery({
-    queryFn: () => getBrandBySlug(slug as string),
-    queryKey: ["brand"],
+  const { data: product } = useQuery({
+    queryFn: () => getProductBySlug(slug as string),
+    queryKey: ["products", slug],
   });
 
-  if (!brand) return null;
+  if (!product) return null;
 
   return (
-    <section id="brands" className="min-h-screen w-full space-y-4 lg:space-y-6">
+    <section
+      id="products"
+      className="min-h-screen w-full space-y-4 lg:space-y-6"
+    >
       <div className="flex w-full flex-col justify-between gap-4 lg:flex-row lg:gap-6">
         <div className="">
           <h1 className="text-4xl font-medium">
-            Brand:{" "}
-            <span className="font-semibold text-primary">{brand?.name}</span>
+            Product:{" "}
+            <span className="font-semibold text-primary">{product?.name}</span>
           </h1>
           <p className="hidden lg:inline">
             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci?
@@ -34,16 +37,16 @@ export default function BrandDetail() {
         </div>
         <div className="flex items-center gap-4 lg:gap-6">
           <LayoutSwitch />
-          <UpdateBrandModal brand={brand}>
+          <UpdateProductModal product={product}>
             <Button className="h-10 items-center gap-4 bg-tertiary text-primary shadow-sm hover:text-tertiary">
-              <p className="text-lg">Modify Brand</p>
+              <p className="text-lg">Modify Product</p>
               <Pencil />
             </Button>
-          </UpdateBrandModal>
+          </UpdateProductModal>
           <DeleteDialog
             params={slug as string}
-            deleteFunction={deleteBrand}
-            queryKey={["brands", slug]}
+            deleteFunction={deleteProduct}
+            queryKey={["products", slug]}
           >
             <div className="grid size-10 place-items-center rounded-md bg-secondary text-tertiary">
               <Trash size={20} className="cursor-pointer" />
@@ -51,7 +54,7 @@ export default function BrandDetail() {
           </DeleteDialog>
         </div>
       </div>
-      <SelectedBrandItems brandSlug={slug as string} />
+      <SelectedProductItems productSlug={slug as string} />
     </section>
   );
 }

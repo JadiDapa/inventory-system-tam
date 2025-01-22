@@ -32,6 +32,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import CreateBrandModal from "@/components/Home/brands/CreateBrandModal";
+import CreateProductModal from "@/components/Home/products/CreateProductModal";
 
 const itemSchema = z.object({
   name: z.string().min(1, "Item Name is required"),
@@ -62,7 +64,7 @@ export default function CreateItems() {
     onSuccess: () => {
       toast.success("Data Created Successfully!");
       queryClient.invalidateQueries({ queryKey: ["items"] });
-      router.refresh();
+      router.push("/items");
     },
     onError: () => toast.error("Something Went Wrong!"),
   });
@@ -176,6 +178,12 @@ export default function CreateItems() {
                               {brand.name}
                             </SelectItem>
                           ))}
+                          <CreateBrandModal>
+                            <div className="flex items-center gap-2 py-1.5 pl-2 pr-8 text-sm">
+                              <p>Create New Brand</p>
+                              <Plus className="size-4" />
+                            </div>
+                          </CreateBrandModal>
                         </SelectContent>
                       </Select>
 
@@ -204,6 +212,12 @@ export default function CreateItems() {
                               {product.name}
                             </SelectItem>
                           ))}
+                          <CreateProductModal>
+                            <div className="flex items-center gap-2 py-1.5 pl-2 pr-8 text-sm">
+                              <p>Create New Product</p>
+                              <Plus className="size-4" />
+                            </div>
+                          </CreateProductModal>
                         </SelectContent>
                       </Select>
 
@@ -228,7 +242,7 @@ export default function CreateItems() {
                 </div>
               </div>
               <div className="space-y-2 rounded-lg bg-tertiary p-6 shadow-md">
-                <h2 className="font-medium">Sampul Kegiatan</h2>
+                <h2 className="font-medium">{"Item's Picture"}</h2>
 
                 <div className="flex flex-col gap-6 lg:flex-row">
                   {pictureUrl ? (
@@ -248,7 +262,7 @@ export default function CreateItems() {
                         className="flex w-full cursor-pointer items-center justify-end gap-2 p-2 text-red-400"
                       >
                         <XCircle size={18} />
-                        <span className="text-lg font-medium">Hapus File</span>
+                        <span className="text-lg font-medium">Remove File</span>
                       </div>
                     </div>
                   ) : (
@@ -261,7 +275,7 @@ export default function CreateItems() {
                           type="button"
                           className="max-w-fit bg-sky-100 text-primary"
                         >
-                          Upload Gambar
+                          Upload Image
                           <FormLabel className="absolute left-0 top-0 h-full w-full border opacity-0">
                             {"'"}
                           </FormLabel>
@@ -302,10 +316,10 @@ export default function CreateItems() {
               </Button>
               <div className="text-center lg:text-end">
                 <div className="text-primary lg:text-lg">
-                  Pastikan data yang anda masukkan sudah tepat
+                  Make sure the data that you input is correct
                 </div>
                 <small className="text-xs lg:text-sm">
-                  Data masih dapat diubah kedepannya*
+                  Data could be modified later*
                 </small>
               </div>
             </div>

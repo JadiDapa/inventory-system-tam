@@ -5,7 +5,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import useSidebarStore from "@/stores/SidebarStore";
-import { Boxes, Cctv, House, LogOut, Tag, X } from "lucide-react";
+import {
+  Boxes,
+  Cctv,
+  House,
+  LogOut,
+  SquareDashedMousePointer,
+  Tag,
+  X,
+} from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,6 +40,11 @@ const userLink = [
     name: "Items",
     url: "/items",
     Icon: Boxes,
+  },
+  {
+    name: "Actions",
+    url: "/actions",
+    Icon: SquareDashedMousePointer,
   },
 ];
 
@@ -95,7 +108,7 @@ export default function Sidebar() {
                     "mt-1 flex w-full items-center justify-between rounded-lg px-5 py-2.5 text-primary duration-300",
                     pathname === item.url
                       ? "bg-primary text-tertiary shadow-sm"
-                      : "hover:bg-primary hover:text-tertiary",
+                      : "hover:bg-primary/50 hover:text-tertiary",
                   )}
                 >
                   <div className="flex items-center justify-center gap-5">

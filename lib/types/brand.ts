@@ -9,6 +9,7 @@ export interface BrandType {
   createdAt: Date;
   updatedAt: Date;
   Item: ItemType[];
+  _count: { Item: number };
 }
 
 export interface CreateBrandType {

@@ -8,7 +8,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Lock, User } from "lucide-react";
+import { Eye, EyeClosed, Lock, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -26,6 +26,7 @@ const registerSchema = z.object({
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   const router = useRouter();
 
@@ -61,7 +62,10 @@ export default function LoginForm() {
   }
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 w-full">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mt-4 w-full lg:mt-6"
+      >
         <div className="space-y-4">
           <FormField
             control={form.control}
@@ -74,7 +78,7 @@ export default function LoginForm() {
                 />
                 <FormControl>
                   <Input
-                    className="h-12 w-full border-2 border-primary ps-12"
+                    className="h-10 w-full border-2 border-primary ps-12 lg:h-12"
                     placeholder="Username"
                     {...field}
                   />
@@ -93,11 +97,17 @@ export default function LoginForm() {
                   size={24}
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-primary"
                 />
+                <div
+                  onClick={() => setIsVisible(!isVisible)}
+                  className="absolute right-3 top-1 text-slate-800"
+                >
+                  {isVisible ? <Eye size={24} /> : <EyeClosed size={24} />}
+                </div>
                 <FormControl>
                   <Input
-                    className="h-12 w-full border-2 border-primary ps-12"
+                    className="h-10 w-full border-2 border-primary ps-12 lg:h-12"
                     placeholder="Password"
-                    type="password"
+                    type={isVisible ? "text" : "password"}
                     {...field}
                   />
                 </FormControl>
@@ -109,7 +119,7 @@ export default function LoginForm() {
 
         <Button
           disabled={isLoading}
-          className="mt-10 flex h-12 w-full items-center gap-3 text-lg"
+          className="mt-6 flex h-10 w-full items-center gap-3 text-lg lg:mt-10 lg:h-12"
         >
           {isLoading ? (
             <>

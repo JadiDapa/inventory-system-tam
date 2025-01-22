@@ -6,8 +6,8 @@ export async function getAllBrands() {
   return data;
 }
 
-export async function getBrandById(id: string) {
-  const { data } = await axiosInstance.get<BrandType>("/brands/" + id);
+export async function getBrandBySlug(slug: string) {
+  const { data } = await axiosInstance.get<BrandType>("/brands/" + slug);
   return data;
 }
 
@@ -27,7 +27,7 @@ export async function createBrand(values: CreateBrandType) {
   return data;
 }
 
-export async function updateBrand(id: string, values: CreateBrandType) {
+export async function updateBrand(slug: string, values: CreateBrandType) {
   const formData = new FormData();
 
   formData.append("name", values.name);
@@ -35,7 +35,7 @@ export async function updateBrand(id: string, values: CreateBrandType) {
   formData.append("detail", values.detail || "");
   formData.append("image", values.image as string);
 
-  const { data } = await axiosInstance.put("/brands/" + id, formData, {
+  const { data } = await axiosInstance.put("/brands/" + slug, formData, {
     headers: {
       "Content-Type": "multi /form-data",
     },
@@ -44,7 +44,7 @@ export async function updateBrand(id: string, values: CreateBrandType) {
   return data;
 }
 
-export async function deleteBrand(id: string) {
-  const { data } = await axiosInstance.delete("/brands/" + id);
+export async function deleteBrand(slug: string) {
+  const { data } = await axiosInstance.delete("/brands/" + slug);
   return data;
 }

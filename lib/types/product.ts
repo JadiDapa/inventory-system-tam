@@ -10,6 +10,7 @@ export interface ProductType {
   createdAt: Date;
   updatedAt: Date;
   Item: ItemType[];
+  _count: { Item: number };
 }
 
 export interface CreateProductType {

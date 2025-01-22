@@ -10,7 +10,11 @@ export async function GET(
     const productSlug = params.productSlug;
     const result = await prisma.product.findUnique({
       where: {
-        id: productSlug,
+        slug: productSlug,
+      },
+      include: {
+        _count: true,
+        Item: true,
       },
     });
     return NextResponse.json(result, { status: 200 });
@@ -52,7 +56,7 @@ export async function PUT(
 
     const result = await prisma.product.update({
       where: {
-        id: productSlug,
+        slug: productSlug,
       },
       data: {
         name: name,
@@ -80,7 +84,7 @@ export async function DELETE(
     const productSlug = params.productSlug;
     const result = await prisma.product.delete({
       where: {
-        id: productSlug,
+        slug: productSlug,
       },
     });
     return NextResponse.json(result, { status: 200 });

@@ -11,6 +11,10 @@ export async function GET(
       where: {
         brandSlug: brandSlug,
       },
+      include: {
+        Brand: true,
+        Product: true,
+      },
     });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {

@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getAllProducts } from "@/lib/networks/product";
-import ProductCard from "./ProductCard";
+import BrandCard from "../brands/BrandCard";
+import Link from "next/link";
 
 export default function ProductList() {
   const { data: products } = useQuery({
@@ -48,7 +49,15 @@ export default function ProductList() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
         {products &&
           products.map((product, index) => (
-            <ProductCard key={index} {...product} />
+            <Link key={index} href={`/products/${product.slug}`}>
+              <BrandCard
+                key={index}
+                name={product.name}
+                slug={product.slug}
+                image={product.image}
+                totalItems={product._count.Item}
+              />
+            </Link>
           ))}
       </div>
     </div>

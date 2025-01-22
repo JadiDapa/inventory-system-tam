@@ -8,7 +8,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Lock, Mail, User } from "lucide-react";
+import { Eye, EyeClosed, Lock, Mail, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -34,6 +34,7 @@ interface ErrorResponse {
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   const router = useRouter();
   const query = useQueryClient();
@@ -76,7 +77,10 @@ export default function RegisterForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 w-full">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mt-4 w-full lg:mt-6"
+      >
         <div className="space-y-4">
           <FormField
             control={form.control}
@@ -89,7 +93,7 @@ export default function RegisterForm() {
                 />
                 <FormControl>
                   <Input
-                    className="h-12 w-full border-slate-800 ps-12"
+                    className="h-10 w-full border-2 border-primary ps-12 lg:h-12"
                     placeholder="Username"
                     type="text"
                     {...field}
@@ -131,14 +135,22 @@ export default function RegisterForm() {
                   size={24}
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-800"
                 />
+                <div
+                  onClick={() => setIsVisible(!isVisible)}
+                  className="absolute right-3 top-1 text-slate-800"
+                >
+                  {isVisible ? <Eye size={24} /> : <EyeClosed size={24} />}
+                </div>
+
                 <FormControl>
                   <Input
-                    className="h-12 w-full border-slate-800 ps-12"
+                    className="h-10 w-full border-2 border-primary ps-12 lg:h-12"
                     placeholder="Password"
-                    type="password"
+                    type={isVisible ? "text" : "password"}
                     {...field}
                   />
                 </FormControl>
+
                 <FormMessage className="text-start" />
               </FormItem>
             )}
@@ -147,7 +159,7 @@ export default function RegisterForm() {
 
         <Button
           disabled={isLoading}
-          className="mt-10 flex h-12 w-full items-center gap-3 text-lg"
+          className="mt-6 flex h-10 w-full items-center gap-3 text-lg lg:mt-10 lg:h-12"
         >
           {isLoading ? (
             <>

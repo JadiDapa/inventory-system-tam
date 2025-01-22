@@ -12,10 +12,12 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ name, slug, image }: ProductCardProps) {
-  const productCount = 0;
-  const itemCount = 0;
+  name,
+  slug,
+  image,
+  totalItems,
   return (
-    <Link href={`/product/${slug}`}>
+    <Link href={`/products/${slug}`}>
       <Card className="w-full cursor-pointer overflow-hidden rounded-lg border bg-tertiary">
         <CardHeader className="relative h-40 w-full p-0 lg:h-48">
           <Image
@@ -29,32 +31,13 @@ export default function ProductCard({ name, slug, image }: ProductCardProps) {
           <CardTitle className="mb-3 text-lg font-medium lg:text-xl lg:font-semibold">
             {name}
           </CardTitle>
-          <div className="flex flex-row justify-between gap-2 lg:flex-col lg:gap-3">
-            <div className="flex items-center space-x-1 lg:justify-between">
-              <div className="flex items-center space-x-2">
-                <Tag className="h-5 w-5 text-muted-foreground" />
-                <span className="hidden text-sm font-medium lg:inline">
-                  Brands
-                </span>
-              </div>
-
-              <Badge variant={"default"} className="hidden lg:block">
-                {productCount}
-              </Badge>
-              <p className="text-lg text-primary lg:hidden">{productCount}</p>
+          <div className="flex flex-row items-center justify-end gap-2 lg:gap-3">
+            <div className="flex items-center">
+              <Boxes className="h-5 w-5 text-muted-foreground" />
             </div>
-            <div className="flex items-center space-x-1 lg:justify-between">
-              <div className="flex items-center space-x-2">
-                <Boxes className="h-5 w-5 text-muted-foreground" />
-                <span className="hidden text-sm font-medium lg:inline">
-                  Items
-                </span>
-              </div>
-              <Badge variant={"default"} className="hidden lg:block">
-                {itemCount}
-              </Badge>
-              <p className="text-lg text-primary lg:hidden">{productCount}</p>
-            </div>
+            <Badge variant={"default"} className="h-5">
+              {total}
+            </Badge>
           </div>
         </CardContent>
       </Card>

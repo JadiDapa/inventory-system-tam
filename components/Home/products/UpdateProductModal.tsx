@@ -28,39 +28,46 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createProduct } from "@/lib/networks/product";
-import { CreateProductType } from "@/lib/types/product";
+import { updateProduct } from "@/lib/networks/product";
+import { CreateProductType, ProductType } from "@/lib/types/product";
 
 const productSchema = z.object({
   name: z.string().min(1, "Product Name is required"),
   detail: z.string().optional(),
 });
 
-interface CreateProductModalProps {
+interface UpdateProductModalProps {
+  product: ProductType;
   children: React.ReactNode;
 }
 
-export default function CreateProductModal({
+export default function UpdateProductModal({
+  product,
   children,
-}: CreateProductModalProps) {
-  const [picture, setPicture] = useState<File>();
-  const [pictureUrl, setPictureUrl] = useState<string>();
+}: UpdateProductModalProps) {
+  const [picture, setPicture] = useState<string | File | undefined>(
+    product?.image as string,
+  );
+  const [pictureUrl, setPictureUrl] = useState<string | undefined>(
+    product?.image as string,
+  );
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { mutate: onCreateProduct, isPending } = useMutation({
-    mutationFn: (values: CreateProductType) => createProduct(values),
+  const { mutate: onUpdateProduct, isPending } = useMutation({
+    mutationFn: (values: CreateProductType) =>
+      updateProduct(product.slug, values),
     onSuccess: () => {
-      toast.success("Data Created Successfully!");
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      router.refresh();
+      toast.success("Data Modified Successfully!");
+      queryClient.invalidateQueries({ queryKey: ["products", product.slug] });
+      router.push("/products");
     },
     onError: () => toast.error("Something Went Wrong!"),
   });
 
   function handlePicture(e: React.ChangeEvent<HTMLInputElement>) {
     const picture = e.target.files?.[0];
-    setPicture(picture);
+    setPicture(picture as File);
     setPictureUrl(URL.createObjectURL(picture!));
   }
 
@@ -72,18 +79,13 @@ export default function CreateProductModal({
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: "",
-      detail: undefined,
+      name: product?.name || "",
+      detail: product?.detail || "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof productSchema>) {
-    if (!picture) {
-      toast.error("Foto Peserta harus diinput");
-      return;
-    }
-
-    onCreateProduct({
+    onUpdateProduct({
       image: picture,
       slug: slugify(values.name, { lower: true }),
       ...values,
@@ -96,7 +98,7 @@ export default function CreateProductModal({
       <DialogContent className="">
         <DialogHeader>
           <DialogTitle className="text-2xl font-medium">
-            Add a New Product
+            Modify an Existing Product
           </DialogTitle>
           <Form {...form}>
             <form

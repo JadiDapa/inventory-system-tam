@@ -10,8 +10,9 @@ import {
 import { Input } from "@/components/ui/input";
 import BrandCard from "@/components/Home/brands/BrandCard";
 import { Search } from "lucide-react";
-import { getAllBrands } from "@/lib/networks/brand";
 import { useQuery } from "@tanstack/react-query";
+import { getAllBrands } from "@/lib/networks/brand";
+import Link from "next/link";
 
 export default function BrandList() {
   const { data: brands } = useQuery({
@@ -47,7 +48,17 @@ export default function BrandList() {
       </div>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
         {brands &&
-          brands.map((brand, index) => <BrandCard key={index} {...brand} />)}
+          brands.map((brand, index) => (
+            <Link key={index} href={`/brands/${brand.slug}`}>
+              <BrandCard
+                key={index}
+                name={brand.name}
+                slug={brand.slug}
+                image={brand.image}
+                totalItems={brand._count.Item}
+              />
+            </Link>
+          ))}
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ export default auth(
     nextUrl: { origin: string | URL | undefined; pathname: string };
   }) => {
     const session = req.auth;
+    const { pathname } = req.nextUrl;
+
     const loginUrl = new URL("/login", req.nextUrl.origin);
     // const adminDashboardUrl = new URL("/admin-dashboard", req.nextUrl.origin);
     // const dashboardUrl = new URL("/dashboard/data-diri", req.nextUrl.origin);
@@ -13,10 +15,14 @@ export default auth(
 
     // const protectedApiRoutes = ["/api/vouchers"];
 
+    if (pathname === "/login" || pathname === "/register") {
+      return;
+    }
     if (!session) {
+      const loginUrl = new URL("/login", req.nextUrl.origin);
       return Response.redirect(loginUrl);
     }
-
+    return;
     // const isAccessingAdmin =
     //   req.nextUrl.pathname.startsWith("/admin-dashboard");
     // const isAccessingDashboard = req.nextUrl.pathname.startsWith("/dashboard");

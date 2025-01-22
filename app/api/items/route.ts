@@ -9,6 +9,10 @@ export async function GET() {
       orderBy: {
         id: "asc",
       },
+      include: {
+        Brand: { select: { name: true } },
+        Product: { select: { name: true } },
+      },
     });
 
     return NextResponse.json(result, { status: 200 });

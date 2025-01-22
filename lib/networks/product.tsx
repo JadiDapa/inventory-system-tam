@@ -6,8 +6,8 @@ export async function getAllProducts() {
   return data;
 }
 
-export async function getProductById(id: string) {
-  const { data } = await axiosInstance.get<ProductType>("/products/" + id);
+export async function getProductBySlug(slug: string) {
+  const { data } = await axiosInstance.get<ProductType>("/products/" + slug);
   return data;
 }
 
@@ -27,7 +27,7 @@ export async function createProduct(values: CreateProductType) {
   return data;
 }
 
-export async function updateProduct(id: string, values: CreateProductType) {
+export async function updateProduct(slug: string, values: CreateProductType) {
   const formData = new FormData();
 
   formData.append("name", values.name);
@@ -35,7 +35,7 @@ export async function updateProduct(id: string, values: CreateProductType) {
   formData.append("detail", values.detail || "");
   formData.append("image", values.image as string);
 
-  const { data } = await axiosInstance.put("/products/" + id, formData, {
+  const { data } = await axiosInstance.put("/products/" + slug, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -44,7 +44,7 @@ export async function updateProduct(id: string, values: CreateProductType) {
   return data;
 }
 
-export async function deleteProduct(id: string) {
-  const { data } = await axiosInstance.delete("/products/" + id);
+export async function deleteProduct(slug: string) {
+  const { data } = await axiosInstance.delete("/products/" + slug);
   return data;
 }

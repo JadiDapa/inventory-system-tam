@@ -9,6 +9,13 @@ export async function GET() {
       orderBy: {
         id: "asc",
       },
+      include: {
+        _count: {
+          select: {
+            Item: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json(result, { status: 200 });

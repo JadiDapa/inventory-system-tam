@@ -7,10 +7,11 @@ export interface ItemType {
   code: string;
   image?: string;
   detail?: string;
+  quantity?: string;
   productSlug: string;
-  Product: ProductType[];
+  Product: ProductType;
   brandSlug: string;
-  Brand: BrandType[];
+  Brand: BrandType;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,6 +21,7 @@ export interface CreateItemType {
   code: string;
   image?: string | File;
   detail?: string;
+  quantity?: string;
   productSlug: string;
   brandSlug: string;
 }

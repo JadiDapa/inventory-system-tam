@@ -28,39 +28,45 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createProduct } from "@/lib/networks/product";
-import { CreateProductType } from "@/lib/types/product";
+import { updateBrand } from "@/lib/networks/brand";
+import { BrandType, CreateBrandType } from "@/lib/types/brand";
 
-const productSchema = z.object({
-  name: z.string().min(1, "Product Name is required"),
+const brandSchema = z.object({
+  name: z.string().min(1, "Brand Name is required"),
   detail: z.string().optional(),
 });
 
-interface CreateProductModalProps {
+interface UpdateBrandModalProps {
+  brand: BrandType;
   children: React.ReactNode;
 }
 
-export default function CreateProductModal({
+export default function UpdateBrandModal({
+  brand,
   children,
-}: CreateProductModalProps) {
-  const [picture, setPicture] = useState<File>();
-  const [pictureUrl, setPictureUrl] = useState<string>();
+}: UpdateBrandModalProps) {
+  const [picture, setPicture] = useState<string | File | undefined>(
+    brand?.image as string,
+  );
+  const [pictureUrl, setPictureUrl] = useState<string | undefined>(
+    brand?.image as string,
+  );
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { mutate: onCreateProduct, isPending } = useMutation({
-    mutationFn: (values: CreateProductType) => createProduct(values),
+  const { mutate: onUpdateBrand, isPending } = useMutation({
+    mutationFn: (values: CreateBrandType) => updateBrand(brand.slug, values),
     onSuccess: () => {
-      toast.success("Data Created Successfully!");
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      router.refresh();
+      toast.success("Data Modified Successfully!");
+      queryClient.invalidateQueries({ queryKey: ["brands", brand.slug] });
+      router.push("/brands");
     },
     onError: () => toast.error("Something Went Wrong!"),
   });
 
   function handlePicture(e: React.ChangeEvent<HTMLInputElement>) {
     const picture = e.target.files?.[0];
-    setPicture(picture);
+    setPicture(picture as File);
     setPictureUrl(URL.createObjectURL(picture!));
   }
 
@@ -69,21 +75,21 @@ export default function CreateProductModal({
     setPictureUrl(undefined);
   }
 
-  const form = useForm<z.infer<typeof productSchema>>({
-    resolver: zodResolver(productSchema),
+  const form = useForm<z.infer<typeof brandSchema>>({
+    resolver: zodResolver(brandSchema),
     defaultValues: {
-      name: "",
-      detail: undefined,
+      name: brand?.name || "",
+      detail: brand?.detail || "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof productSchema>) {
+  async function onSubmit(values: z.infer<typeof brandSchema>) {
     if (!picture) {
       toast.error("Foto Peserta harus diinput");
       return;
     }
 
-    onCreateProduct({
+    onUpdateBrand({
       image: picture,
       slug: slugify(values.name, { lower: true }),
       ...values,
@@ -96,7 +102,7 @@ export default function CreateProductModal({
       <DialogContent className="">
         <DialogHeader>
           <DialogTitle className="text-2xl font-medium">
-            Add a New Product
+            Modify an Existing Brand
           </DialogTitle>
           <Form {...form}>
             <form
@@ -109,7 +115,7 @@ export default function CreateProductModal({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Product Name</FormLabel>
+                      <FormLabel>Brand Name</FormLabel>
                       <FormControl>
                         <Input className="w-full" {...field} />
                       </FormControl>
@@ -137,8 +143,7 @@ export default function CreateProductModal({
 
                 <div className="flex-1">
                   <div className="text-lg font-medium">
-                    Product Image{" "}
-                    <span className="text-primary">(Optional)</span>
+                    Brand Logo <span className="text-primary">(Optional)</span>
                   </div>
                   {pictureUrl ? (
                     <div className="relative flex h-[134px] w-full flex-col rounded-md border-[3px] border-dashed">

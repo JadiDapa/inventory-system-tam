@@ -6,8 +6,20 @@ export async function getAllItems() {
   return data;
 }
 
-export async function getItemById(id: string) {
-  const { data } = await axiosInstance.get<ItemType>("/items/" + id);
+export async function getItemBySlug(slug: string) {
+  const { data } = await axiosInstance.get<ItemType[]>("/items/" + slug);
+  return data;
+}
+
+export async function getItemsByBrand(slug: string) {
+  const { data } = await axiosInstance.get<ItemType[]>("/items/brand/" + slug);
+  return data;
+}
+
+export async function getItemsByProduct(slug: string) {
+  const { data } = await axiosInstance.get<ItemType[]>(
+    "/items/product/" + slug,
+  );
   return data;
 }
 
@@ -48,7 +60,7 @@ export async function updateItem(id: string, values: CreateItemType) {
   return data;
 }
 
-export async function deleteItem(id: string) {
-  const { data } = await axiosInstance.delete("/items/" + id);
+export async function deleteItem(slug: string) {
+  const { data } = await axiosInstance.delete("/items/" + slug);
   return data;
 }
