@@ -92,11 +92,6 @@ export default function CreateItems() {
   });
 
   async function onSubmit(values: z.infer<typeof itemSchema>) {
-    if (!picture) {
-      toast.error("Foto Peserta harus diinput");
-      return;
-    }
-
     onCreateBrand({
       image: picture,
       ...values,

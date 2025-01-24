@@ -48,6 +48,14 @@ export const itemColumn: ColumnDef<ItemType>[] = [
     cell: ({ getValue }) => <div>{getValue() as string}</div>,
   },
   {
+    accessorKey: "quantity",
+    accessorFn: (row) => row.quantity,
+    header: ({ column }) => <TableSorter column={column} header="QTY" />,
+    cell: ({ getValue }) => (
+      <div className="text-lg text-primary">{getValue() as string}</div>
+    ),
+  },
+  {
     accessorKey: "createdAt",
     accessorFn: (row) => row.createdAt,
     header: ({ column }) => <TableSorter column={column} header="DATE" />,

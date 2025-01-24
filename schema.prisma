@@ -86,16 +86,63 @@ model Product {
 }
 
 model Item {
-  id          String   @id @unique @default(cuid())
-  name        String
-  code        String
-  image       String?
-  detail      String?
-  quantity    String
-  productSlug String
-  Product     Product  @relation(fields: [productSlug], references: [slug], onDelete: Cascade)
-  brandSlug   String
-  Brand       Brand    @relation(fields: [brandSlug], references: [slug], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String         @id @unique @default(cuid())
+  name         String
+  code         String         @unique
+  image        String?
+  detail       String?
+  quantity     String
+  productSlug  String
+  Product      Product        @relation(fields: [productSlug], references: [slug], onDelete: Cascade)
+  brandSlug    String
+  Brand        Brand          @relation(fields: [brandSlug], references: [slug], onDelete: Cascade)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  EntryItem    EntryItem[]
+  ConsumedItem ConsumedItem[]
+}
+
+model Entry {
+  id         String      @id @unique @default(cuid())
+  reason     String
+  status     String
+  detail     String?
+  image      String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  EntryItems EntryItem[]
+}
+
+model EntryItem {
+  id        String   @id @unique @default(cuid())
+  itemCode  String
+  Items     Item     @relation(fields: [itemCode], references: [code], onDelete: Cascade)
+  entryId   String
+  Entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  quantity  String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Consume {
+  id            String         @id @unique @default(cuid())
+  reason        String
+  status        String
+  detail        String?
+  image         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  ConsumedItems ConsumedItem[]
+}
+
+model ConsumedItem {
+  id        String   @id @unique @default(cuid())
+  itemCode  String
+  Items     Item     @relation(fields: [itemCode], references: [code], onDelete: Cascade)
+  consumeId String
+  Consume   Consume  @relation(fields: [consumeId], references: [id], onDelete: Cascade)
+  quantity  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

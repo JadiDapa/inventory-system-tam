@@ -9,7 +9,7 @@ type TableSorterProps = {
 
 const TableSorter: React.FC<TableSorterProps> = ({ column, header }) => {
   function handleClick() {
-    column.toggleSorting(column.getIsSorted() === "asc");
+    column.toggleSorting(column.getIsSorted() === desc);
   }
 
   return (

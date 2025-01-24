@@ -189,7 +189,42 @@ const ItemTable: React.FC<DataTableProps<any, any>> = ({ columns, data }) => {
         </TableBody>
       </Table>
 
-      <hr />
+      {/* <Table className="lg:hidden">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-xl font-medium">
+              {"Item's List"}
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.map((row) => {
+            return (
+              <TableRow
+                key={row.id}
+                className="flex items-center justify-between py-2"
+              >
+                <div className="flex h-full flex-col gap-1">
+                  <div className="text-start font-medium">
+                    {row.getValue("name")}
+                  </div>
+                  <div className="text-sm">{row.getValue("brand")}</div>
+                </div>
+                <div className="flex flex-col items-end gap-1 text-end">
+                  <div className="">{row.getValue("product")}</div>
+                  <div className="">
+                    Qty :{" "}
+                    <span className="text-primary">
+                      {row.getValue("quantity")}
+                    </span>
+                  </div>
+                </div>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table> */}
+
       <TablePagination table={table} />
     </div>
   );

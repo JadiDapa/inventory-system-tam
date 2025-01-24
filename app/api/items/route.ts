@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import { fileUpload } from "@/lib/file-upload";
-export const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
     const result = await prisma.item.findMany({
       orderBy: {
-        id: "asc",
+        id: "desc",
       },
       include: {
         Brand: { select: { name: true } },
@@ -35,15 +34,13 @@ export async function POST(req: NextRequest) {
     const brandSlug = formData.get("brandSlug") as string;
     const image = formData.get("image") as File;
 
-    if (!image) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    let filePath: string | null = null;
+
+    // Ensure image exists and is a valid File before attempting upload
+    if (image && image.name) {
+      const filename = await fileUpload(image, "uploads");
+      filePath = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/${filename}`;
     }
-
-    const filename = await fileUpload(image, "uploads");
-
-    const filePath = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/${filename}`;
-
-    console.log(name, code, detail, productSlug, brandSlug, filePath, "0");
 
     const result = await prisma.item.create({
       data: {

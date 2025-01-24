@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { fileUpload } from "@/lib/file-upload";
-export const prisma = new PrismaClient();
 
 export async function GET() {
   try {
     const result = await prisma.product.findMany({
       orderBy: {
-        id: "asc",
+        id: "desc",
       },
       include: {
         _count: {
@@ -34,28 +33,30 @@ export async function POST(req: NextRequest) {
     const name = formData.get("name") as string;
     const slug = formData.get("slug") as string;
     const detail = formData.get("detail") as string;
-    const image = formData.get("image") as File;
+    const image = formData.get("image") as File | null;
 
-    if (!image) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    let filePath: string | null = null;
+
+    // Only upload the image if it exists
+    if (image) {
+      const filename = await fileUpload(image, "uploads");
+      filePath = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/${filename}`;
     }
-
-    const filename = await fileUpload(image, "uploads");
-
-    const filePath = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/${filename}`;
 
     const result = await prisma.product.create({
       data: {
         name: name,
         slug: slug,
         detail: detail,
-        image: filePath,
+        image: filePath, // This will be null if no image was uploaded
       },
     });
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },

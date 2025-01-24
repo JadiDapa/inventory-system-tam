@@ -42,8 +42,8 @@ const userLink = [
     Icon: Boxes,
   },
   {
-    name: "Actions",
-    url: "/actions",
+    name: "Entries",
+    url: "/entries",
     Icon: SquareDashedMousePointer,
   },
 ];

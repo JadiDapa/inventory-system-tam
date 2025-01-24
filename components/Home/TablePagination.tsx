@@ -20,7 +20,6 @@ export default function TablePagination({ table }: Props) {
       <Button
         onClick={() => table.firstPage()}
         disabled={!table.getCanPreviousPage()}
-        variant="secondary"
         className="h-10 w-10 p-0"
       >
         <ChevronsLeft strokeWidth={1.5} />
@@ -28,7 +27,6 @@ export default function TablePagination({ table }: Props) {
       <Button
         onClick={() => table.previousPage()}
         disabled={!table.getCanPreviousPage()}
-        variant="secondary"
         className="h-10 w-10 p-0"
       >
         <ChevronLeft strokeWidth={1.5} />
@@ -36,7 +34,6 @@ export default function TablePagination({ table }: Props) {
       <Button
         onClick={() => table.nextPage()}
         disabled={!table.getCanNextPage()}
-        variant="secondary"
         className="h-10 w-10 p-0"
       >
         <ChevronRight strokeWidth={1.5} />
@@ -44,7 +41,6 @@ export default function TablePagination({ table }: Props) {
       <Button
         onClick={() => table.lastPage()}
         disabled={!table.getCanNextPage()}
-        variant="secondary"
         className="h-10 w-10 p-0"
       >
         <ChevronsRight strokeWidth={1.5} />

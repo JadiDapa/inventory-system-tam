@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const result = await prisma.brand.findMany({
       orderBy: {
-        id: "asc",
+        id: "desc",
       },
       include: {
         _count: {
