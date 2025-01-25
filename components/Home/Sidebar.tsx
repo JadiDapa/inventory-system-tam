@@ -10,7 +10,8 @@ import {
   Cctv,
   House,
   LogOut,
-  SquareDashedMousePointer,
+  Package,
+  PackageOpen,
   Tag,
   X,
 } from "lucide-react";
@@ -44,7 +45,12 @@ const userLink = [
   {
     name: "Entries",
     url: "/entries",
-    Icon: SquareDashedMousePointer,
+    Icon: Package,
+  },
+  {
+    name: "Consumes",
+    url: "/consumes",
+    Icon: PackageOpen,
   },
 ];
 

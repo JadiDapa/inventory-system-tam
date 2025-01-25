@@ -143,6 +143,7 @@ model ConsumedItem {
   consumeId String
   Consume   Consume  @relation(fields: [consumeId], references: [id], onDelete: Cascade)
   quantity  String
+  status    String   @default("pending")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
