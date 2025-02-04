@@ -20,10 +20,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TailSpin } from "react-loader-spinner";
-import SelectItem from "@/components/Home/SelectItem";
-import useRequestItemStore from "@/stores/selectItemStore";
 import { createConsume } from "@/lib/networks/consume";
 import { CreateConsumeType } from "@/lib/types/consume";
+import { Textarea } from "@/components/ui/textarea";
+import CSVUpload from "@/components/Home/CSVUpload";
 
 const itemSchema = z.object({
   reason: z.string().min(1, "Item Name is required"),
@@ -31,10 +31,10 @@ const itemSchema = z.object({
 });
 
 export default function CreateConsume() {
-  const { requestedItems } = useRequestItemStore();
-
   const [picture, setPicture] = useState<File>();
   const [pictureUrl, setPictureUrl] = useState<string>();
+
+  const [csvFile, setCsvFile] = useState<File>();
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -68,27 +68,28 @@ export default function CreateConsume() {
     },
   });
 
+  function handleCsvFileUpload(file: File) {
+    setCsvFile(file);
+  }
+
   async function onSubmit(values: z.infer<typeof itemSchema>) {
-    if (!picture) {
-      toast.error("Foto Peserta harus diinput");
+    if (!csvFile) {
+      toast.error("Items CSV File is required!");
       return;
     }
 
     onCreateConsume({
       image: picture,
+      csvFile: csvFile,
       status: "pending",
       ...values,
-      ConsumedItems: requestedItems.map((item) => ({
-        itemCode: item.code,
-        quantity: item.quantity.toString(),
-      })),
     });
   }
 
   return (
     <section id="brands" className="min-h-screen w-full space-y-4 lg:space-y-6">
       <div className="flex gap-1 text-2xl capitalize">
-        <span className="text-gray-400">Items / </span>
+        <span className="text-gray-400">Consume / </span>
         <span>Create</span>
       </div>
       <Form {...form}>
@@ -110,126 +111,123 @@ export default function CreateConsume() {
               </Button>
             </div>
           </header>
-          <div className="flex flex-col flex-wrap gap-6 lg:flex-row">
-            <div className="flex w-full flex-col gap-6 lg:flex-row">
-              <div className="w-full">
-                <div className="grid w-full grid-cols-1 flex-col flex-wrap gap-6 rounded-md bg-tertiary p-6 shadow-md lg:grid-cols-2 lg:flex-row">
-                  <h2 className="text-xl font-medium lg:col-span-2">
-                    Consume Details
-                  </h2>
-                  <FormField
-                    control={form.control}
-                    name="reason"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel>Reason of Item&lsquo;s Consume</FormLabel>
-                        <FormControl>
-                          <Input placeholder="ex: John Doe" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="detail"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormLabel>Detail</FormLabel>
-                        <FormControl>
-                          <Input placeholder="ex: John Doe" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="w-full flex-wrap gap-6 rounded-md bg-tertiary p-6 shadow-md">
-                  <SelectItem />
-                </div>
-              </div>
+          <div className="flex gap-6">
+            <div className="grid w-full flex-col flex-wrap gap-6 rounded-md bg-tertiary p-6 shadow-md lg:flex-row">
+              <h2 className="text-xl font-medium">Item Details</h2>
+              <FormField
+                control={form.control}
+                name="reason"
+                render={({ field }) => (
+                  <FormItem className="">
+                    <FormLabel>Reason of Item&lsquo;s Consume</FormLabel>
+                    <FormControl>
+                      <Input placeholder="ex: John Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="detail"
+                render={({ field }) => (
+                  <FormItem className="">
+                    <FormLabel>
+                      Detail{" "}
+                      <span className="text-sm text-primary">(Optional)</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        className="h-32"
+                        placeholder="Provide more details here if needed"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="space-y-2 rounded-md bg-tertiary p-6 shadow-md">
+              <h2 className="font-medium">{"Item's Picture"}</h2>
 
-              <div className="space-y-2 rounded-lg bg-tertiary p-6 shadow-md">
-                <h2 className="font-medium">{"Item's Picture"}</h2>
-
-                <div className="flex flex-col gap-6 lg:flex-row">
-                  {pictureUrl ? (
-                    <div className="relative flex h-80 w-full flex-col rounded-md border-[3px] border-dashed lg:size-80">
-                      <div className="relative h-5/6 w-full items-center justify-center">
-                        {pictureUrl && (
-                          <Image
-                            fill
-                            src={pictureUrl}
-                            className="border-2 border-double object-contain object-center p-1"
-                            alt={pictureUrl}
-                          />
-                        )}
-                      </div>
-                      <div
-                        onClick={removePicture}
-                        className="flex w-full cursor-pointer items-center justify-end gap-2 p-2 text-red-400"
+              <div className="flex flex-col gap-6 lg:flex-row">
+                {pictureUrl ? (
+                  <div className="relative flex h-72 w-full flex-col rounded-md border-[3px] border-dashed lg:size-80">
+                    <div className="relative h-5/6 w-full items-center justify-center">
+                      {pictureUrl && (
+                        <Image
+                          fill
+                          src={pictureUrl}
+                          className="border-2 border-double object-contain object-center p-1"
+                          alt={pictureUrl}
+                        />
+                      )}
+                    </div>
+                    <div
+                      onClick={removePicture}
+                      className="flex w-full cursor-pointer items-center justify-end gap-2 p-2 text-red-400"
+                    >
+                      <XCircle size={18} />
+                      <span className="text-lg font-medium">Remove File</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="relative flex h-40 w-full flex-col items-center justify-center rounded-md border-[3px] border-dashed lg:size-72">
+                    <div className="flex size-12 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                      <Plus size={28} strokeWidth={1.75} />
+                    </div>
+                    <div className="mt-8 flex flex-col items-center gap-2 text-center">
+                      <Button
+                        type="button"
+                        className="max-w-fit bg-sky-100 text-primary"
                       >
-                        <XCircle size={18} />
-                        <span className="text-lg font-medium">Remove File</span>
-                      </div>
+                        Upload Image
+                        <FormLabel className="absolute left-0 top-0 h-full w-full border opacity-0">
+                          {"'"}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            className="absolute left-0 top-0 opacity-0"
+                            type="file"
+                            accept="image/*"
+                            onChange={handlePicture}
+                          />
+                        </FormControl>
+                      </Button>
                     </div>
-                  ) : (
-                    <div className="relative flex h-40 w-full flex-col items-center justify-center rounded-md border-[3px] border-dashed lg:size-80">
-                      <div className="flex size-12 items-center justify-center rounded-md bg-muted text-muted-foreground">
-                        <Plus size={28} strokeWidth={1.75} />
-                      </div>
-                      <div className="mt-8 flex flex-col items-center gap-2 text-center">
-                        <Button
-                          type="button"
-                          className="max-w-fit bg-sky-100 text-primary"
-                        >
-                          Upload Image
-                          <FormLabel className="absolute left-0 top-0 h-full w-full border opacity-0">
-                            {"'"}
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              className="absolute left-0 top-0 opacity-0"
-                              type="file"
-                              accept="image/*"
-                              onChange={handlePicture}
-                            />
-                          </FormControl>
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
-
-            <div className="flex w-full flex-col items-center justify-between gap-6 rounded-md bg-tertiary p-6 shadow-md lg:flex-row">
-              <Button className="w-full lg:w-1/3">
-                {isPending ? (
-                  <>
-                    Submitting
-                    <TailSpin
-                      visible={true}
-                      color="#ffffff"
-                      ariaLabel="tail-spin-loading"
-                      radius="0.2"
-                      width={24}
-                      height={24}
-                      strokeWidth={5}
-                    />
-                  </>
-                ) : (
-                  "Submit"
-                )}
-              </Button>
-              <div className="text-center lg:text-end">
-                <div className="text-primary lg:text-lg">
-                  Make sure the data that you input is correct
-                </div>
-                <small className="text-xs lg:text-sm">
-                  Data could be modified later*
-                </small>
+          </div>
+          <CSVUpload onFileUpload={handleCsvFileUpload} />
+          <div className="flex w-full flex-col items-center justify-between gap-6 rounded-md bg-tertiary p-6 shadow-md lg:flex-row">
+            <Button className="w-full lg:w-1/3">
+              {isPending ? (
+                <>
+                  Submitting
+                  <TailSpin
+                    visible={true}
+                    color="#ffffff"
+                    ariaLabel="tail-spin-loading"
+                    radius="0.2"
+                    width={24}
+                    height={24}
+                    strokeWidth={5}
+                  />
+                </>
+              ) : (
+                "Submit"
+              )}
+            </Button>
+            <div className="text-center lg:text-end">
+              <div className="text-primary lg:text-lg">
+                Make sure the data that you input is correct
               </div>
+              <small className="text-xs lg:text-sm">
+                Data could be modified later*
+              </small>
             </div>
           </div>
         </form>

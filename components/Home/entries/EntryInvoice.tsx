@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { EntryType } from "@/lib/types/entry";
 import { EntryItemType } from "@/lib/types/entry-item";
 import {
@@ -8,6 +9,9 @@ import {
   Document,
   StyleSheet,
 } from "@react-pdf/renderer";
+import { id } from "date-fns/locale";
+import { format } from "date-fns";
+import { numberToWords } from "@/lib/numberToWord";
 
 const styles = StyleSheet.create({
   page: {
@@ -26,9 +30,20 @@ const styles = StyleSheet.create({
     color: "#3E3E3E",
   },
 
-  titleContainer: { flexDirection: "row", marginTop: 12 },
+  titleContainer: {
+    flexDirection: "row",
+    marginTop: 12,
+    justifyContent: "space-between",
+  },
 
-  logo: { width: 90 },
+  logo: { width: 120 },
+
+  separator: {
+    width: "100%",
+    height: 1,
+    backgroundColor: "black",
+    marginVertical: 12,
+  },
 
   reportTitle: {
     fontSize: 40,
@@ -55,7 +70,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 20,
     color: "#111111",
-    // backgroundColor: "#DEDEDE",
     borderColor: "whitesmoke",
     borderRightWidth: 1,
     borderBottomWidth: 1,
@@ -67,7 +81,6 @@ const styles = StyleSheet.create({
     fontSize: 9,
     paddingTop: 4,
     paddingLeft: 7,
-    flex: 1,
     borderColor: "whitesmoke",
     borderRightWidth: 1,
     borderBottomWidth: 1,
@@ -81,8 +94,6 @@ const styles = StyleSheet.create({
     borderColor: "whitesmoke",
     borderBottomWidth: 1,
   },
-
-  tbody2: { flex: 2, borderRightWidth: 1 },
 });
 
 interface EntryInvoiceProps {
@@ -93,132 +104,227 @@ export default function EntryInvoice({ entry }: EntryInvoiceProps) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <InvoiceTitle title="INVENTORY" logo="/images/logo.png/" />
-        <View
-          style={{
-            flexDirection: "row",
-            display: "flex",
-            width: "100%",
-            margin: "24px 0",
-          }}
-        >
-          <View
-            style={{
-              width: "30%",
-              height: 3,
-              backgroundColor: "#00467f",
-            }}
-          />
-          <View
-            style={{
-              width: "70%",
-              height: 3,
-              backgroundColor: "#4c4c4c",
-            }}
-          />
-        </View>
-
-        <Address entryId={entry.id} status={entry.status} />
+        <InvoiceHeader />
+        <View style={styles.separator} />
+        <InvoiceTitle />
+        <InvoiceDetail entry={entry} />
         <TableHead />
-        <TableBody entryItems={entry.EntryItems} />
-        <TableTotal entryItems={entry.EntryItems} />
+        <TableBody entryItems={entry.EntryItem} />
+        <TableFooter />
       </Page>
     </Document>
   );
 }
 
-const InvoiceTitle = ({ title, logo }: { title: string; logo: string }) => (
+const InvoiceHeader = () => (
   <View style={styles.titleContainer}>
-    <View style={styles.spaceBetween}>
-      <Image style={styles.logo} src={logo} />
-      <Text style={styles.reportTitle}>{title}</Text>
+    <View style={{ fontSize: 8, lineHeight: 1.5 }}>
+      <Text style={{ fontSize: 10, fontStyle: "bold", color: "#00467f" }}>
+        PT. Taruna Anugrah Mandiri
+      </Text>
+      <Text>Jl. RE Martadinata No 2091</Text>
+      <Text>Palembang - Sumatera Selatan 30116</Text>
+      <Text>Ph: +62-711-71060 Fax: +62-711-56267100</Text>
+      <Text>Email: info@tarunagroup.co.id</Text>
     </View>
+    <View style={{ fontSize: 8, lineHeight: 1.5, paddingTop: 12 }}>
+      <Text>Jalan Daan Mogot E-19-21</Text>
+      <Text>Komplek Ruko Arcadia, Jakarta</Text>
+      <Text>Ph: +62-21-5576-5299</Text>
+    </View>
+    <Image style={styles.logo} src={"/images/logo.png/"} />
   </View>
 );
 
-const Address = ({ entryId, status }: { entryId: string; status: string }) => (
-  <View style={styles.titleContainer}>
-    <View style={styles.spaceBetween}>
-      <View>
-        <Text style={styles.invoice}>Items Entry </Text>
-        <Text style={styles.invoiceNumber}>Invoice number: {entryId} </Text>
-      </View>
-      <View>
-        <Text style={styles.addressTitle}>{status}</Text>
-      </View>
-    </View>
+const InvoiceTitle = () => (
+  <View style={{ flexDirection: "column", alignItems: "center" }}>
+    <Text style={{ fontSize: 10, textDecoration: "underline" }}>
+      SURAT JALAN
+    </Text>
+    <Text>Nomor : B.250/002/TAM/2025</Text>
   </View>
 );
+
+const InvoiceDetail = ({ entry }: { entry: EntryType }) => {
+  const day = format(entry.createdAt, "EEEE", { locale: id });
+  const date = numberToWords(parseInt(format(entry.createdAt, "d")));
+  const month = format(entry.createdAt, "MMMM", { locale: id });
+  const fullDate = format(entry.createdAt, "dd-MM-yyyy", { locale: id });
+
+  return (
+    <View style={{ marginTop: 24 }}>
+      <View>
+        <Text>Kepada Yth,</Text>
+        <Text>DINAS KOMINFO KOTA</Text>
+        <Text>Palembang, Sumatera Selatan</Text>
+      </View>
+      <View style={{ marginTop: 24 }}>
+        <Text>Dengan Hormat,</Text>
+      </View>
+
+      <View style={{ marginTop: 24 }}>
+        <Text>
+          Pada hari ini, {day}, tanggal {date} bulan {month} tahun Dua Ribu Dua
+          Puluh Lima ({fullDate})
+        </Text>
+        <Text>
+          Bersama dengan surat ini, kami kirimkan barang/jasa dengan rincian :
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+// const Address = ({ entryId, status }: { entryId: string; status: string }) => (
+//   <View style={styles.titleContainer}>
+//     <View style={styles.spaceBetween}>
+//       <View>
+//         <Text style={styles.invoice}>Items Entry </Text>
+//         <Text style={styles.invoiceNumber}>Invoice number: {entryId} </Text>
+//       </View>
+//       <View>
+//         <Text style={styles.addressTitle}>{status}</Text>
+//       </View>
+//     </View>
+//   </View>
+// );
 
 const TableHead = () => (
   <View
     style={{
       width: "100%",
       flexDirection: "row",
+      display: "flex",
       marginTop: 10,
       backgroundColor: "#00467f",
       color: "#FFFFFF",
     }}
   >
-    <View style={[styles.tbody, styles.tbody2]}>
+    <View style={{ ...styles.tbody, width: "5%" }}>
+      <Text>No</Text>
+    </View>
+    <View style={{ ...styles.tbody, width: "20%" }}>
       <Text>Product</Text>
     </View>
-    <View style={styles.tbody}>
+    <View style={{ ...styles.tbody, width: "20%" }}>
       <Text>Brand</Text>
     </View>
-    <View style={styles.tbody}>
+    <View style={{ ...styles.tbody, width: "20%" }}>
       <Text>Type</Text>
     </View>
-    <View style={styles.tbody}>
-      <Text>Code/SN</Text>
+    <View style={{ ...styles.tbody, width: "25%" }}>
+      <Text>Serial Number</Text>
     </View>
-    <View style={styles.tbody}>
+    <View style={{ ...styles.tbody, width: "10%" }}>
       <Text>QTY</Text>
     </View>
   </View>
 );
 
 const TableBody = ({ entryItems }: { entryItems: EntryItemType[] }) =>
-  entryItems.map((item) => (
+  entryItems.map((item, index) => (
     <>
-      <View style={{ width: "100%", flexDirection: "row" }}>
-        <View style={[styles.tbody, styles.tbody2]}>
-          <Text>{item.Items.Product.name}</Text>
+      <View key={index} style={{ width: "100%", flexDirection: "row" }}>
+        <View style={{ ...styles.tbody, width: "5%" }}>
+          <Text>{index + 1} </Text>
         </View>
-        <View style={styles.tbody}>
-          <Text>{item.Items.Brand.name} </Text>
+        <View style={{ ...styles.tbody, width: "20%" }}>
+          <Text>{item.Item.Product.name}</Text>
         </View>
-        <View style={styles.tbody}>
-          <Text>{item.Items.name}</Text>
+        <View style={{ ...styles.tbody, width: "20%" }}>
+          <Text>{item.Item.Brand.name} </Text>
         </View>
-        <View style={styles.tbody}>
-          <Text>{item.itemCode}</Text>
+        <View style={{ ...styles.tbody, width: "20%" }}>
+          <Text>{item.Item.name}</Text>
         </View>
-        <View style={styles.tbody}>
-          <Text>{item.quantity}</Text>
+        <View style={{ ...styles.tbody, width: "25%" }}>
+          {item.SerialNumber.map((sn) => (
+            <Text key={sn.id}>{sn.number}</Text>
+          ))}
+        </View>
+        <View style={{ ...styles.tbody, width: "10%" }}>
+          <Text>
+            {item.quantity > 0 ? item.quantity : item.SerialNumber.length}
+          </Text>
         </View>
       </View>
     </>
   ));
 
-const TableTotal = ({ entryItems }: { entryItems: EntryItemType[] }) => (
-  <View style={{ width: "100%", flexDirection: "row" }}>
-    <View style={styles.total}>
-      <Text></Text>
-    </View>
-    <View style={styles.total}>
-      <Text> </Text>
-    </View>
-    <View style={styles.tbody}>
-      <Text>Total</Text>
-    </View>
-    <View style={styles.tbody}>
+// const TableTotal = ({ entryItems }: { entryItems: EntryItemType[] }) => (
+//   <View style={{ width: "100%", flexDirection: "row" }}>
+//     <View style={styles.total}>
+//       <Text></Text>
+//     </View>
+//     <View style={styles.total}>
+//       <Text> </Text>
+//     </View>
+//     <View style={styles.tbody}>
+//       <Text>Total</Text>
+//     </View>
+//     <View style={styles.tbody}>
+//       <Text>
+//         {entryItems.reduce(
+//           (sum, item) => Number(sum) + Number(item.quantity),
+//           0,
+//         )}
+//       </Text>
+//     </View>
+//   </View>
+// );
+
+function TableFooter() {
+  return (
+    <View style={{ width: "100%" }}>
       <Text>
-        {entryItems.reduce(
-          (sum, item) => Number(sum) + Number(item.quantity),
-          0,
-        )}
+        Surat Jalan ini berfungsi sebagai bukti pengiriman barang/jasa pekerjaan
+        kepada pemesan. Demikian Surat Jalan ini dibuat dengan sebenarnya untuk
+        di pergunakan sebagaimana mestinya
       </Text>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          padding: "10px 20px",
+          width: "100%",
+        }}
+      >
+        <View
+          style={{
+            width: "15%",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Text>Penerima</Text>
+          <View
+            style={{
+              marginTop: 40,
+              width: "100%",
+              height: 1,
+              backgroundColor: "black",
+            }}
+          />
+        </View>
+        <View
+          style={{
+            width: "15%",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Text>Pengirim</Text>
+          <View
+            style={{
+              marginTop: 40,
+              width: "100%",
+              height: 1,
+              backgroundColor: "black",
+            }}
+          />
+        </View>
+      </View>
     </View>
-  </View>
-);
+  );
+}

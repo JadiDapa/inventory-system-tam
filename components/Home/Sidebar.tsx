@@ -10,9 +10,11 @@ import {
   Cctv,
   House,
   LogOut,
+  NotepadText,
   Package,
   PackageOpen,
   Tag,
+  Users,
   X,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -28,6 +30,26 @@ const userLink = [
     Icon: House,
   },
   {
+    name: "Requests",
+    url: "/requests",
+    Icon: NotepadText,
+  },
+  {
+    name: "Users",
+    url: "/users",
+    Icon: Users,
+  },
+  {
+    name: "Entries",
+    url: "/entries",
+    Icon: Package,
+  },
+  {
+    name: "Consumes",
+    url: "/consumes",
+    Icon: PackageOpen,
+  },
+  {
     name: "Brands",
     url: "/brands",
     Icon: Tag,
@@ -41,16 +63,6 @@ const userLink = [
     name: "Items",
     url: "/items",
     Icon: Boxes,
-  },
-  {
-    name: "Entries",
-    url: "/entries",
-    Icon: Package,
-  },
-  {
-    name: "Consumes",
-    url: "/consumes",
-    Icon: PackageOpen,
   },
 ];
 

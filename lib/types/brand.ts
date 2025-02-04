@@ -4,7 +4,7 @@ export interface BrandType {
   id: string;
   name: string;
   slug: string;
-  image?: string;
+  image?: string | File;
   detail?: string;
   createdAt: Date;
   updatedAt: Date;

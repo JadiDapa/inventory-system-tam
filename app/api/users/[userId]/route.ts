@@ -14,7 +14,9 @@ export async function GET(
     });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },
@@ -35,7 +37,9 @@ export async function DELETE(
     });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },

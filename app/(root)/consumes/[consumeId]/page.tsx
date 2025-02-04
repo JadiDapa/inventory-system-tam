@@ -8,13 +8,12 @@ import { getConsumeById, updateConsume } from "@/lib/networks/consume";
 import Image from "next/image";
 import { formatDate } from "@/lib/format-date";
 import { Badge } from "@/components/ui/badge";
-import ConsumedItemTable from "@/components/Home/consumes/ConsumedItemTable";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-// import { PDFViewer } from "@react-pdf/renderer";
-// import EntryInvoice from "@/components/Home/entries/EntryInvoice";
 import { CreateConsumeType } from "@/lib/types/consume";
-import { consumedItemColumn } from "@/lib/columns/consume-item-column";
+import { ConsumeItemTable } from "@/components/Home/consumes/ConsumeItemTable";
+import { PDFViewer } from "@react-pdf/renderer";
+import EntryInvoice from "@/components/Home/entries/EntryInvoice";
 
 export default function ConsumeDetail() {
   const { consumeId } = useParams();
@@ -26,7 +25,7 @@ export default function ConsumeDetail() {
     queryKey: ["consumes", consumeId],
   });
 
-  const { mutate: onUpdateBrand } = useMutation({
+  const { mutate: onUpdateConsume } = useMutation({
     mutationFn: (values: CreateConsumeType) =>
       updateConsume(consumeId as string, values),
     onSuccess: () => {
@@ -37,12 +36,13 @@ export default function ConsumeDetail() {
     onError: () => toast.error("Something Went Wrong!"),
   });
 
-  async function onUpdateConsume(status: string) {
-    onUpdateBrand({
+  async function handleConsume(status: string) {
+    onUpdateConsume({
       reason: consume!.reason,
       status: status,
       detail: consume!.detail,
       image: consume!.image,
+      csvFile: consume!.csvFile,
     });
   }
 
@@ -61,14 +61,14 @@ export default function ConsumeDetail() {
           {consume?.status === "pending" && (
             <>
               <Button
-                onClick={() => onUpdateConsume("confirmed")}
+                onClick={() => handleConsume("confirmed")}
                 className="h-10 items-center gap-4 bg-green-500 text-tertiary shadow-sm hover:bg-tertiary hover:text-green-500"
               >
                 <p className="text-lg">Confirm Consume</p>
                 <FolderCheck />
               </Button>
               <Button
-                onClick={() => onUpdateConsume("canceled")}
+                onClick={() => handleConsume("canceled")}
                 className="h-10 items-center gap-4 bg-red-500 text-tertiary shadow-sm hover:bg-tertiary hover:text-red-500"
               >
                 <p className="text-lg">Cancel Consume</p>
@@ -137,13 +137,12 @@ export default function ConsumeDetail() {
           </div>
         </div>
       </div>
-      <ConsumedItemTable
-        data={consume?.ConsumedItems}
-        columns={consumedItemColumn}
-      />
-      {/* <PDFViewer width="721" height="500" className="app">
-        <EntryInvoice entry={cons} />
-      </PDFViewer> */}
+      <div className="w-full space-y-3 rounded-xl bg-tertiary p-6">
+        <ConsumeItemTable consumeItems={consume.ConsumeItem} />
+      </div>
+      <PDFViewer width="721" height="500" className="app">
+        <EntryInvoice entry={consume} />
+      </PDFViewer>
     </section>
   );
 }

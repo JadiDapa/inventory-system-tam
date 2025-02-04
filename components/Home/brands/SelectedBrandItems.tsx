@@ -27,7 +27,7 @@ interface SelectedBrandItemsProps {
 
 interface TransformedData {
   productName: string;
-  productImage?: string;
+  productimage?: string | File;
   items: {
     name: string;
     code: string;

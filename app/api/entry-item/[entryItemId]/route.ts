@@ -12,12 +12,14 @@ export async function GET(
         id: entryItemId,
       },
       include: {
-        Items: true,
+        Item: true,
       },
     });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },
@@ -42,7 +44,9 @@ export async function PUT(
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },
@@ -63,7 +67,9 @@ export async function DELETE(
     });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },

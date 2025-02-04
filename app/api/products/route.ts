@@ -37,7 +37,6 @@ export async function POST(req: NextRequest) {
 
     let filePath: string | null = null;
 
-    // Only upload the image if it exists
     if (image) {
       const filename = await fileUpload(image, "uploads");
       filePath = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/${filename}`;

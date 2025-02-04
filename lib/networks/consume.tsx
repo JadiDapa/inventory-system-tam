@@ -18,7 +18,7 @@ export async function createConsume(values: CreateConsumeType) {
   formData.append("status", values.status);
   formData.append("detail", values.detail || "");
   formData.append("image", values.image as string);
-  formData.append("consumedItems", JSON.stringify(values.ConsumedItems));
+  formData.append("csvFile", values.csvFile as string);
 
   const { data } = await axiosInstance.post("/consumes", formData, {
     headers: {
@@ -35,6 +35,7 @@ export async function updateConsume(id: string, values: CreateConsumeType) {
   formData.append("status", values.status);
   formData.append("detail", values.detail || "");
   formData.append("image", values.image as string);
+  formData.append("csvFile", values.csvFile as string);
 
   const { data } = await axiosInstance.put("/consumes/" + id, formData, {
     headers: {

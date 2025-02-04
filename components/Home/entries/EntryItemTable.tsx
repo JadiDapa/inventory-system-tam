@@ -1,16 +1,4 @@
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { useState } from "react";
-import {
   Table,
   TableBody,
   TableCell,
@@ -18,79 +6,35 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { EntryItemType } from "@/lib/types/entry-item";
 
-interface EntryItemTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface EntryItemTableProps {
+  entryItems: EntryItemType[];
 }
 
-export default function EntryItemTable<TData, TValue>({
-  columns,
-  data,
-}: EntryItemTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      columnFilters,
-    },
-  });
-
+export function EntryItemTable({ entryItems }: EntryItemTableProps) {
   return (
-    <div className="w-full rounded-xl bg-tertiary p-6">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No items have been added yet
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      <hr />
-    </div>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Product</TableHead>
+          <TableHead>Brand</TableHead>
+          <TableHead>Type</TableHead>
+          <TableHead>Quantity</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {entryItems?.map((items) => (
+          <TableRow key={items.id}>
+            <TableCell>{items.Item.Product.name}</TableCell>
+            <TableCell>{items.Item.Brand.name}</TableCell>
+            <TableCell>{items.Item.name}</TableCell>
+            <TableCell>
+              {items.quantity > 0 ? items.quantity : items.SerialNumber.length}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

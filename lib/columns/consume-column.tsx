@@ -34,7 +34,7 @@ export const consumeColumn: ColumnDef<ConsumeType>[] = [
   },
   {
     accessorKey: "quantity",
-    accessorFn: (row) => row.ConsumedItems.length,
+    accessorFn: (row) => row.ConsumeItem.length,
     header: ({ column }) => <TableSorter column={column} header="QUANTITY" />,
     cell: ({ getValue }) => <div>{getValue() as string}</div>,
   },

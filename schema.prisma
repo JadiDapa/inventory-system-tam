@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -45,11 +42,12 @@ model User {
   username  String    @unique
   email     String    @unique
   password  String
-  role      String
+  role      String    @default("employee")
   accounts  Account[]
   sessions  Session[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  Request   Request[]
 
   @@map("users")
 }
@@ -87,63 +85,100 @@ model Product {
 
 model Item {
   id           String         @id @unique @default(cuid())
-  name         String
-  code         String         @unique
+  name         String         @unique
   image        String?
   detail       String?
-  quantity     String
+  quantity     Int            @default(0)
+  isSerialized Boolean        @default(false)
   productSlug  String
   Product      Product        @relation(fields: [productSlug], references: [slug], onDelete: Cascade)
   brandSlug    String
   Brand        Brand          @relation(fields: [brandSlug], references: [slug], onDelete: Cascade)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+  SerialNumber SerialNumber[]
   EntryItem    EntryItem[]
-  ConsumedItem ConsumedItem[]
+  ConsumeItem  ConsumeItem[]
+  RequestItem  RequestItem[]
+}
+
+model SerialNumber {
+  id            String       @id @unique @default(cuid())
+  number        String       @unique
+  itemId        String
+  Item          Item         @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  status        String       @default("pending")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  EntryItem     EntryItem?   @relation(fields: [entryItemId], references: [id])
+  entryItemId   String?
+  ConsumeItem   ConsumeItem? @relation(fields: [consumeItemId], references: [id])
+  consumeItemId String?
 }
 
 model Entry {
-  id         String      @id @unique @default(cuid())
-  reason     String
-  status     String
-  detail     String?
-  image      String?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  EntryItems EntryItem[]
+  id        String      @id @unique @default(cuid())
+  reason    String
+  status    String      @default("pending")
+  detail    String?
+  image     String?
+  csvFile   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  EntryItem EntryItem[]
 }
 
 model EntryItem {
-  id        String   @id @unique @default(cuid())
-  itemCode  String
-  Items     Item     @relation(fields: [itemCode], references: [code], onDelete: Cascade)
-  entryId   String
-  Entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
-  quantity  String
-  status    String   @default("pending")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String         @id @default(uuid())
+  Entry        Entry          @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  entryId      String
+  Item         Item           @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId       String
+  quantity     Int?
+  SerialNumber SerialNumber[]
 }
 
 model Consume {
-  id            String         @id @unique @default(cuid())
-  reason        String
-  status        String
-  detail        String?
-  image         String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  ConsumedItems ConsumedItem[]
+  id          String        @id @unique @default(cuid())
+  reason      String
+  status      String        @default("pending")
+  detail      String?
+  image       String?
+  csvFile     String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  ConsumeItem ConsumeItem[]
 }
 
-model ConsumedItem {
-  id        String   @id @unique @default(cuid())
-  itemCode  String
-  Items     Item     @relation(fields: [itemCode], references: [code], onDelete: Cascade)
-  consumeId String
-  Consume   Consume  @relation(fields: [consumeId], references: [id], onDelete: Cascade)
-  quantity  String
-  status    String   @default("pending")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model ConsumeItem {
+  id           String         @id @default(uuid())
+  Consume      Consume        @relation(fields: [consumeId], references: [id], onDelete: Cascade)
+  consumeId    String
+  Item         Item           @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId       String
+  quantity     Int?
+  SerialNumber SerialNumber[]
+}
+
+model Request {
+  id          String        @id @unique @default(cuid())
+  username    String
+  User        User          @relation(fields: [username], references: [username], onDelete: Cascade)
+  reason      String
+  status      String        @default("pending")
+  detail      String?
+  image       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  RequestItem RequestItem[]
+}
+
+model RequestItem {
+  id        String  @id @default(uuid())
+  Request   Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  requestId String
+  Item      Item    @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId    String
+  quantity  Int     @default(0)
+  status    String  @default("pending")
 }

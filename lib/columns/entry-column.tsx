@@ -34,7 +34,7 @@ export const entryColumn: ColumnDef<EntryType>[] = [
   },
   {
     accessorKey: "quantity",
-    accessorFn: (row) => row.EntryItems.length,
+    accessorFn: (row) => row.EntryItem.length,
     header: ({ column }) => <TableSorter column={column} header="QUANTITY" />,
     cell: ({ getValue }) => <div>{getValue() as string}</div>,
   },

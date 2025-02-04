@@ -4,7 +4,7 @@ export interface ProductType {
   id: string;
   name: string;
   slug: string;
-  image?: string;
+  image?: string | File;
   detail?: string;
   brandSlug: string;
   createdAt: Date;

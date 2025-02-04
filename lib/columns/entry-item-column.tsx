@@ -28,14 +28,6 @@ export const entryItemColumn: ColumnDef<EntryItemType>[] = [
     ),
   },
   {
-    accessorKey: "code",
-    accessorFn: (row) => row.Items.code,
-    header: ({ column }) => <TableSorter column={column} header="CODE/SK" />,
-    cell: ({ getValue }) => (
-      <div className="capitalize">{getValue() as string}</div>
-    ),
-  },
-  {
     accessorKey: "quantity",
     accessorFn: (row) => row.quantity,
     header: ({ column }) => <TableSorter column={column} header="QTY" />,

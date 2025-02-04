@@ -18,7 +18,7 @@ export async function createEntry(values: CreateEntryType) {
   formData.append("status", values.status);
   formData.append("detail", values.detail || "");
   formData.append("image", values.image as string);
-  formData.append("entryItems", JSON.stringify(values.entryItems));
+  formData.append("csvFile", values.csvFile as string);
 
   const { data } = await axiosInstance.post("/entries", formData, {
     headers: {
@@ -35,6 +35,7 @@ export async function updateEntry(id: string, values: CreateEntryType) {
   formData.append("status", values.status);
   formData.append("detail", values.detail || "");
   formData.append("image", values.image as string);
+  formData.append("csvFile", values.csvFile as string);
 
   const { data } = await axiosInstance.put("/entries/" + id, formData, {
     headers: {

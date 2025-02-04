@@ -54,13 +54,11 @@ export default function SelectedProductItems({
         <div className="divide-y border-t py-1">
           <div className="flex items-center py-2">
             <p className="flex-[2] font-semibold">Product Type</p>
-            <p className="flex-[2] font-semibold">Code/SN</p>
             <p className="flex-[1] font-semibold">Quantity</p>
           </div>
           {items?.map((item) => (
             <div key={item.name} className="flex items-center py-2">
               <p className="flex-[2] text-base">{item.name}</p>
-              <p className="flex-[2] text-base">{item.code}</p>
               <p className="flex-[1] text-lg font-semibold text-primary">
                 {item.quantity}
               </p>

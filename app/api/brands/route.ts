@@ -36,13 +36,12 @@ export async function POST(req: NextRequest) {
     const detail = formData.get("detail") as string;
     const image = formData.get("image") as File;
 
-    if (!image) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    let filePath: string | null = null;
+
+    if (image && image.name) {
+      const filename = await fileUpload(image, "uploads");
+      filePath = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/${filename}`;
     }
-
-    const filename = await fileUpload(image, "uploads");
-
-    const filePath = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/${filename}`;
 
     const result = await prisma.brand.create({
       data: {
@@ -55,7 +54,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },

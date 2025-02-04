@@ -15,7 +15,9 @@ export const GET = async (
       headers: { "Content-Type": "image/jpeg" },
     });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json({ error: "File not found" }, { status: 404 });
   }
 };

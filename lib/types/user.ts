@@ -5,7 +5,7 @@ export interface UserType {
   emailVerified?: Date;
   password: string;
   role: string;
-  image?: string;
+  image?: string | File;
   createdAt: Date;
   updatedAt: Date;
 }

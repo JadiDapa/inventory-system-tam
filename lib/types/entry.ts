@@ -1,14 +1,15 @@
-import { CreateEntryItemType, EntryItemType } from "./entry-item";
+import { EntryItemType } from "./entry-item";
 
 export interface EntryType {
   id: string;
   reason: string;
   status: string;
-  detail: string;
-  image: string;
+  detail?: string;
+  image?: string | File;
+  csvFile: string | File;
   createdAt: Date;
   updatedAt: Date;
-  EntryItems: EntryItemType[];
+  EntryItem: EntryItemType[];
 }
 
 export interface CreateEntryType {
@@ -16,5 +17,5 @@ export interface CreateEntryType {
   status: string;
   detail?: string;
   image?: string | File;
-  entryItems?: CreateEntryItemType[];
+  csvFile: string | File;
 }

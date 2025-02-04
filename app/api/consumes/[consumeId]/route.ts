@@ -13,9 +13,9 @@ export async function GET(
         id: consumeId,
       },
       include: {
-        ConsumedItems: {
+        ConsumeItem: {
           include: {
-            Items: {
+            Item: {
               include: {
                 Brand: {
                   select: {
@@ -29,13 +29,16 @@ export async function GET(
                 },
               },
             },
+            SerialNumber: true,
           },
         },
       },
     });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },
@@ -81,37 +84,25 @@ export async function PUT(
         },
       });
 
-      const consumedItems = await tx.consumedItem.findMany({
-        where: { consumeId },
-        include: {
-          Items: true,
-        },
-      });
-
       if (status === "confirmed") {
-        for (const consumedItem of consumedItems) {
+        const consumeItems = await tx.consumeItem.findMany({
+          where: { consumeId },
+        });
+
+        for (const consumeItem of consumeItems) {
           await tx.item.update({
-            where: { code: consumedItem.itemCode },
+            where: { id: consumeItem.itemId },
             data: {
-              quantity: (
-                BigInt(consumedItem.Items.quantity) -
-                BigInt(consumedItem.quantity)
-              ).toString(),
+              quantity: { decrement: consumeItem.quantity as number },
             },
           });
 
-          await tx.consumedItem.update({
-            where: { id: consumedItem.id },
-            data: { status: "approved" },
+          await tx.serialNumber.updateMany({
+            where: { consumeItemId: consumeItem.id },
+            data: { status: "used" },
           });
         }
       } else if (status === "canceled") {
-        for (const consumedItem of consumedItems) {
-          await tx.consumedItem.update({
-            where: { id: consumedItem.id },
-            data: { status: "canceled" },
-          });
-        }
       }
 
       return updatedConsume;
@@ -119,7 +110,9 @@ export async function PUT(
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },
@@ -140,7 +133,9 @@ export async function DELETE(
     });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },

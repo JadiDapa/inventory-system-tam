@@ -11,6 +11,7 @@ export async function GET() {
       include: {
         Brand: { select: { name: true } },
         Product: { select: { name: true } },
+        SerialNumber: { where: { status: "available" } },
       },
     });
 
@@ -28,7 +29,6 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
 
     const name = formData.get("name") as string;
-    const code = formData.get("code") as string;
     const detail = formData.get("detail") as string;
     const productSlug = formData.get("productSlug") as string;
     const brandSlug = formData.get("brandSlug") as string;
@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
 
     let filePath: string | null = null;
 
-    // Ensure image exists and is a valid File before attempting upload
     if (image && image.name) {
       const filename = await fileUpload(image, "uploads");
       filePath = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/${filename}`;
@@ -45,12 +44,10 @@ export async function POST(req: NextRequest) {
     const result = await prisma.item.create({
       data: {
         name: name,
-        code: code,
         detail: detail,
         productSlug: productSlug,
         brandSlug: brandSlug,
         image: filePath,
-        quantity: "0",
       },
     });
 

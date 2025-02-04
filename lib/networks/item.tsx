@@ -6,8 +6,8 @@ export async function getAllItems() {
   return data;
 }
 
-export async function getItemBySlug(slug: string) {
-  const { data } = await axiosInstance.get<ItemType[]>("/items/" + slug);
+export async function getItemById(id: string) {
+  const { data } = await axiosInstance.get<ItemType>("/items/" + id);
   return data;
 }
 
@@ -27,7 +27,6 @@ export async function createItem(values: CreateItemType) {
   const formData = new FormData();
 
   formData.append("name", values.name);
-  formData.append("code", values.code);
   formData.append("detail", values.detail || "");
   formData.append("productSlug", values.productSlug);
   formData.append("brandSlug", values.brandSlug);
@@ -45,7 +44,6 @@ export async function updateItem(id: string, values: CreateItemType) {
   const formData = new FormData();
 
   formData.append("name", values.name);
-  formData.append("code", values.code);
   formData.append("detail", values.detail || "");
   formData.append("productSlug", values.productSlug);
   formData.append("brandSlug", values.brandSlug);
@@ -60,7 +58,7 @@ export async function updateItem(id: string, values: CreateItemType) {
   return data;
 }
 
-export async function deleteItem(slug: string) {
-  const { data } = await axiosInstance.delete("/items/" + slug);
+export async function deleteItem(id: string) {
+  const { data } = await axiosInstance.delete("/items/" + id);
   return data;
 }

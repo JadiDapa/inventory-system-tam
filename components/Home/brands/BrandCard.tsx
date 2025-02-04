@@ -6,7 +6,7 @@ import { Boxes } from "lucide-react";
 interface BrandCardProps {
   name: string;
   slug: string;
-  image?: string;
+  image?: string | File;
   totalItems?: number;
 }
 

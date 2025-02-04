@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { fileUpload } from "@/lib/file-upload";
+import { InputCsv, transformData } from "../entries/route";
+import readCSV from "@/lib/csv-parse";
 export const prisma = new PrismaClient();
 
 export async function GET() {
@@ -9,7 +11,7 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
-      include: { ConsumedItems: { select: { quantity: true } } },
+      include: { ConsumeItem: { select: { quantity: true } } },
     });
 
     return NextResponse.json(result, { status: 200 });
@@ -29,35 +31,19 @@ export async function POST(req: NextRequest) {
     const status = formData.get("status") as string;
     const detail = formData.get("detail") as string;
     const image = formData.get("image") as File;
+    const csvFile = formData.get("csvFile") as File;
 
-    const consumedItems = JSON.parse(
-      formData.get("consumedItems") as string,
-    ) as {
-      itemCode: string;
-      quantity: string;
-    }[];
-
-    console.log(consumedItems);
-
-    // Validate input
-    if (!image) {
+    if (!image || !csvFile) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    if (
-      !reason ||
-      !status ||
-      !Array.isArray(consumedItems) ||
-      consumedItems.length === 0
-    ) {
-      return NextResponse.json(
-        { error: "Invalid input. Ensure all fields are provided." },
-        { status: 400 },
-      );
-    }
+    const imageName = await fileUpload(image, "uploads");
+    const imagePath = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/${imageName}`;
 
-    const filename = await fileUpload(image, "uploads");
-    const filePath = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/${filename}`;
+    const csvName = await fileUpload(csvFile, "uploads");
+    const csvPath = `${process.env.NEXT_PUBLIC_BASE_URL}/api/images/${csvName}`;
+
+    const csvData = (await readCSV(csvFile)) as InputCsv[];
 
     const result = await prisma.$transaction(async (tx) => {
       const newConsume = await tx.consume.create({
@@ -65,23 +51,57 @@ export async function POST(req: NextRequest) {
           reason,
           status,
           detail,
-          image: filePath,
+          image: imagePath,
+          csvFile: csvPath,
         },
       });
 
-      const consumedItemsData = consumedItems.map((item) => ({
-        itemCode: item.itemCode,
-        quantity: item.quantity,
-        consumeId: newConsume.id,
-      }));
+      const items = await prisma.item.findMany();
 
-      await tx.consumedItem.createMany({
-        data: consumedItemsData,
+      const transformedData = transformData(csvData);
+
+      await tx.consumeItem.createMany({
+        data: transformedData.map((serial) => ({
+          consumeId: newConsume.id,
+          itemId: items.find((item) => serial.itemName === item.name)!.id,
+          quantity: serial.quantity ? Number(serial.quantity) : 0,
+        })),
       });
+
+      const consumeItemRecord = await tx.consumeItem.findMany({
+        where: { consumeId: newConsume.id },
+      });
+
+      const serialNumbers = transformedData.flatMap((serial) => {
+        if (!serial.serialNumber) return [];
+
+        const matchingItem = items.find(
+          (item) => serial.itemName === item.name,
+        );
+        if (!matchingItem) return [];
+
+        const matchingConsumeItem = consumeItemRecord.find(
+          (entryItem) => entryItem.itemId === matchingItem.id,
+        );
+        if (!matchingConsumeItem) return [];
+
+        return serial.serialNumber.map((sn) => ({
+          itemId: matchingItem.id,
+          number: sn.serial,
+          consumeItemId: matchingConsumeItem.id, // Updating this field
+        }));
+      });
+
+      // Instead of createMany, update only the consumeItemId
+      for (const serial of serialNumbers) {
+        await tx.serialNumber.updateMany({
+          where: { itemId: serial.itemId, number: serial.number },
+          data: { consumeItemId: serial.consumeItemId },
+        });
+      }
 
       return newConsume;
     });
-
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
     if (error instanceof Error) {

@@ -14,7 +14,7 @@ export const requestItemsColumn: ColumnDef<ItemType>[] = [
   },
   {
     accessorKey: "code",
-    header: ({ column }) => <TableSorter column={column} header="CODE/SK" />,
+    header: ({ column }) => <TableSorter column={column} header="PRODUCT" />,
     cell: ({ getValue }) => (
       <div className="capitalize">{getValue() as string}</div>
     ),

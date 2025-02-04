@@ -7,7 +7,7 @@ import Link from "next/link";
 interface ProductCardProps {
   name: string;
   slug: string;
-  image?: string;
+  image?: string | File;
   detail?: string;
 }
 

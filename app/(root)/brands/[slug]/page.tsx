@@ -1,7 +1,6 @@
 "use client";
 
 import LayoutSwitch from "@/components/Home/LayoutSwitch";
-import { Button } from "@/components/ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
@@ -35,10 +34,10 @@ export default function BrandDetail() {
         <div className="flex items-center gap-4 lg:gap-6">
           <LayoutSwitch />
           <UpdateBrandModal brand={brand}>
-            <Button className="h-10 items-center gap-4 bg-tertiary text-primary shadow-sm hover:text-tertiary">
+            <div className="flex h-10 items-center gap-4 rounded-md bg-tertiary px-4 py-4 text-primary shadow-sm transition hover:bg-primary hover:text-tertiary">
               <p className="text-lg">Modify Brand</p>
               <Pencil />
-            </Button>
+            </div>
           </UpdateBrandModal>
           <DeleteDialog
             params={slug as string}

@@ -7,15 +7,20 @@ export async function GET(
   { params }: { params: { itemId: string } },
 ) {
   try {
-    const itemId = params.itemId;
+    const id = params.itemId;
     const result = await prisma.item.findUnique({
       where: {
-        id: itemId,
+        id: id,
+      },
+      include: {
+        SerialNumber: true,
       },
     });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },
@@ -33,7 +38,6 @@ export async function PUT(
     const formData = await req.formData();
 
     const name = formData.get("name") as string;
-    const code = formData.get("code") as string;
     const detail = formData.get("detail") as string;
     const productSlug = formData.get("productSlug") as string;
     const brandSlug = formData.get("brandSlug") as string;
@@ -58,7 +62,6 @@ export async function PUT(
       },
       data: {
         name: name,
-        code: code,
         detail: detail,
         productSlug: productSlug,
         brandSlug: brandSlug,
@@ -68,7 +71,9 @@ export async function PUT(
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },
@@ -81,15 +86,17 @@ export async function DELETE(
   { params }: { params: { itemId: string } },
 ) {
   try {
-    const itemId = params.itemId;
+    const id = params.itemId;
     const result = await prisma.item.delete({
       where: {
-        id: itemId,
+        id: id,
       },
     });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
     return NextResponse.json(
       { message: "Something went wrong!", error },
       { status: 500 },

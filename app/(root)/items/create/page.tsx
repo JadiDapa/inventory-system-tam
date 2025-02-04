@@ -37,7 +37,6 @@ import CreateProductModal from "@/components/Home/products/CreateProductModal";
 
 const itemSchema = z.object({
   name: z.string().min(1, "Item Name is required"),
-  code: z.string().min(1, "Item Code/SK is required"),
   productSlug: z.string().min(1, "Item's Product is required"),
   brandSlug: z.string().min(1, "Item's Brand is required"),
   detail: z.string().optional(),
@@ -84,7 +83,6 @@ export default function CreateItems() {
     resolver: zodResolver(itemSchema),
     defaultValues: {
       name: "",
-      code: "",
       productSlug: "",
       brandSlug: "",
       detail: "",
@@ -132,19 +130,6 @@ export default function CreateItems() {
                   render={({ field }) => (
                     <FormItem className="">
                       <FormLabel>Item Name / Type</FormLabel>
-                      <FormControl>
-                        <Input placeholder="ex: John Doe" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="code"
-                  render={({ field }) => (
-                    <FormItem className="">
-                      <FormLabel>Item Code / SK</FormLabel>
                       <FormControl>
                         <Input placeholder="ex: John Doe" {...field} />
                       </FormControl>

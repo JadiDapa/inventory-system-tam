@@ -1,14 +1,15 @@
-import { CreateConsumedItemType, ConsumedItemType } from "./consumed-item";
+import { ConsumeItemType } from "./consume-item";
 
 export interface ConsumeType {
   id: string;
   reason: string;
   status: string;
-  detail: string;
-  image: string;
+  detail?: string;
+  image?: string | File;
+  csvFile?: string | File;
   createdAt: Date;
   updatedAt: Date;
-  ConsumedItems: ConsumedItemType[];
+  ConsumeItem: ConsumeItemType[];
 }
 
 export interface CreateConsumeType {
@@ -16,5 +17,5 @@ export interface CreateConsumeType {
   status: string;
   detail?: string;
   image?: string | File;
-  ConsumedItems?: CreateConsumedItemType[];
+  csvFile?: string | File;
 }

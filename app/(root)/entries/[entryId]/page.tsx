@@ -8,13 +8,12 @@ import { getEntryById, updateEntry } from "@/lib/networks/entry";
 import Image from "next/image";
 import { formatDate } from "@/lib/format-date";
 import { Badge } from "@/components/ui/badge";
-import EntryItemTable from "@/components/Home/entries/EntryItemTable";
-import { entryItemColumn } from "@/lib/columns/entry-item-column";
 import { CreateEntryType } from "@/lib/types/entry";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { PDFViewer } from "@react-pdf/renderer";
 import EntryInvoice from "@/components/Home/entries/EntryInvoice";
+import { EntryItemTable } from "@/components/Home/entries/EntryItemTable";
 
 export default function EntryDetail() {
   const { entryId } = useParams();
@@ -26,7 +25,7 @@ export default function EntryDetail() {
     queryKey: ["entries", entryId],
   });
 
-  const { mutate: onUpdateBrand } = useMutation({
+  const { mutate: onUpdateEntry } = useMutation({
     mutationFn: (values: CreateEntryType) =>
       updateEntry(entryId as string, values),
     onSuccess: () => {
@@ -37,12 +36,13 @@ export default function EntryDetail() {
     onError: () => toast.error("Something Went Wrong!"),
   });
 
-  async function onUpdateEntry(status: string) {
-    onUpdateBrand({
+  async function handleEntry(status: string) {
+    onUpdateEntry({
       reason: entry!.reason,
       status: status,
       detail: entry!.detail,
       image: entry!.image,
+      csvFile: entry!.csvFile,
     });
   }
 
@@ -61,14 +61,14 @@ export default function EntryDetail() {
           {entry.status === "pending" && (
             <>
               <Button
-                onClick={() => onUpdateEntry("confirmed")}
+                onClick={() => handleEntry("confirmed")}
                 className="h-10 items-center gap-4 bg-green-500 text-tertiary shadow-sm hover:bg-tertiary hover:text-green-500"
               >
                 <p className="text-lg">Confirm Entry</p>
                 <FolderCheck />
               </Button>
               <Button
-                onClick={() => onUpdateEntry("canceled")}
+                onClick={() => handleEntry("canceled")}
                 className="h-10 items-center gap-4 bg-red-500 text-tertiary shadow-sm hover:bg-tertiary hover:text-red-500"
               >
                 <p className="text-lg">Cancel Entry</p>
@@ -137,7 +137,9 @@ export default function EntryDetail() {
           </div>
         </div>
       </div>
-      <EntryItemTable data={entry.EntryItems} columns={entryItemColumn} />
+      <div className="w-full space-y-3 rounded-xl bg-tertiary p-6">
+        <EntryItemTable entryItems={entry.EntryItem} />
+      </div>
       <PDFViewer width="721" height="500" className="app">
         <EntryInvoice entry={entry} />
       </PDFViewer>

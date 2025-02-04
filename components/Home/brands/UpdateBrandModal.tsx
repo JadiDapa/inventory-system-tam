@@ -1,6 +1,6 @@
 "use client";
 
-import { DialogClose, DialogHeader } from "@/components/ui/dialog";
+import { DialogHeader } from "@/components/ui/dialog";
 import {
   Dialog,
   DialogTrigger,
@@ -51,6 +51,8 @@ export default function UpdateBrandModal({
   const [pictureUrl, setPictureUrl] = useState<string | undefined>(
     brand?.image as string,
   );
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -60,6 +62,7 @@ export default function UpdateBrandModal({
       toast.success("Data Modified Successfully!");
       queryClient.invalidateQueries({ queryKey: ["brands", brand.slug] });
       router.push("/brands");
+      setIsDialogOpen(false);
     },
     onError: () => toast.error("Something Went Wrong!"),
   });
@@ -97,7 +100,7 @@ export default function UpdateBrandModal({
   }
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className="">
         <DialogHeader>
@@ -191,29 +194,27 @@ export default function UpdateBrandModal({
                   )}
                 </div>
               </div>
-
               <Button
                 disabled={isPending}
                 className="flex w-full items-center gap-3"
+                type="submit"
               >
-                <DialogClose className="w-full">
-                  {isPending ? (
-                    <>
-                      Submitting
-                      <TailSpin
-                        visible={true}
-                        color="#ffffff"
-                        ariaLabel="tail-spin-loading"
-                        radius="0.2"
-                        width={24}
-                        height={24}
-                        strokeWidth={5}
-                      />
-                    </>
-                  ) : (
-                    "Submit"
-                  )}
-                </DialogClose>
+                {isPending ? (
+                  <>
+                    Submitting
+                    <TailSpin
+                      visible={true}
+                      color="#ffffff"
+                      ariaLabel="tail-spin-loading"
+                      radius="0.2"
+                      width={24}
+                      height={24}
+                      strokeWidth={5}
+                    />
+                  </>
+                ) : (
+                  "Submit"
+                )}
               </Button>
             </form>
           </Form>
