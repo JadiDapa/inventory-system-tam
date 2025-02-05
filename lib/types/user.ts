@@ -1,3 +1,5 @@
+import { RequestType } from "./request";
+
 export interface UserType {
   id: string;
   username: string;
@@ -8,6 +10,7 @@ export interface UserType {
   image?: string | File;
   createdAt: Date;
   updatedAt: Date;
+  Request?: RequestType[];
 }
 
 export interface CreateUserType {
@@ -17,3 +20,16 @@ export interface CreateUserType {
   role?: string;
   image?: string | File;
 }
+
+export const userRoles = [
+  {
+    label: "Admin",
+    value: "admin",
+    color: "green-500",
+  },
+  {
+    label: "Employee",
+    value: "employee",
+    color: "blue-500",
+  },
+];

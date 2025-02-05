@@ -37,6 +37,8 @@ export default function SelectItemRequest() {
       const newItem = {
         name: selected,
         id: getStock?.id,
+        product: getStock?.Product.name,
+        brand: getStock?.Brand.name,
         stock: getStock ? getStock.quantity : 0,
         quantity: quantity,
       };

@@ -6,6 +6,13 @@ export async function getAllRequests() {
   return data;
 }
 
+export async function getRequestsByUsername(username: string) {
+  const { data } = await axiosInstance.get<RequestType[]>(
+    "/requests/users/" + username,
+  );
+  return data;
+}
+
 export async function getRequestById(id: string) {
   const { data } = await axiosInstance.get<RequestType>("/requests/" + id);
   return data;

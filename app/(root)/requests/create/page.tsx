@@ -96,9 +96,11 @@ export default function CreateRequest() {
           <header className="items-center justify-between lg:flex">
             <div className="">
               <h1 className="text-2xl font-medium">
-                Create a New Item&lsquo;s Request
+                Create Item&lsquo;s Request
               </h1>
-              <p className="mt-1 text-gray-400">Create a New Items to Store</p>
+              <p className="mt-1 text-gray-400">
+                Create a New Item Request to Use The Item from Inventories{" "}
+              </p>
             </div>
             <div className="mt-6 flex justify-end gap-4 lg:mt-0 lg:justify-start">
               <Button variant="default" type="submit" className="gap-2">
@@ -176,7 +178,7 @@ export default function CreateRequest() {
                     <div className="mt-8 flex flex-col items-center gap-2 text-center">
                       <Button
                         type="button"
-                        className="max-w-fit bg-sky-100 text-primary"
+                        className="max-w-fit bg-sky-100 text-primary hover:bg-primary hover:text-tertiary"
                       >
                         Upload Image
                         <FormLabel className="absolute left-0 top-0 h-full w-full border opacity-0">

@@ -3,13 +3,37 @@ import { ColumnDef } from "@tanstack/react-table";
 import { RequestType } from "../types/request";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { PopoverTrigger } from "@radix-ui/react-popover";
-import { EllipsisVertical, Eye, Pencil, Trash } from "lucide-react";
+import {
+  Clock,
+  EllipsisVertical,
+  Eye,
+  FolderCheck,
+  FolderX,
+} from "lucide-react";
 import Link from "next/link";
-import DeleteDialog from "@/components/Home/DeleteDialog";
-import { deleteRequest } from "../networks/request";
 import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 export const requestColumn: ColumnDef<RequestType>[] = [
+  {
+    accessorKey: "createdAt",
+    accessorFn: (row) => row.createdAt,
+    header: ({ column }) => (
+      <TableSorter column={column} header="DATE/TIME" isFirst />
+    ),
+    cell: ({ getValue }) => {
+      const date = new Date(getValue() as Date);
+      return (
+        <div className="translate-x-4">
+          <div className="font-semibold text-primary">
+            {format(date, "HH.mm", { locale: id })}
+          </div>
+          <div>{format(date, "d MMMM yyyy")}</div>
+        </div>
+      );
+    },
+  },
   {
     accessorKey: "reason",
     accessorFn: (row) => row.reason,
@@ -21,7 +45,8 @@ export const requestColumn: ColumnDef<RequestType>[] = [
 
   {
     accessorKey: "quantity",
-    accessorFn: (row) => row.RequestItem.length,
+    accessorFn: (row) =>
+      row.RequestItem.reduce((acc, item) => acc + item.quantity, 0),
     header: ({ column }) => <TableSorter column={column} header="QUANTITY" />,
     cell: ({ getValue }) => {
       const value = getValue();
@@ -35,19 +60,31 @@ export const requestColumn: ColumnDef<RequestType>[] = [
     cell: ({ getValue }) => {
       const value = getValue();
       if (value === "pending") {
-        return <Badge variant={"destructive"}>Pending</Badge>;
+        return (
+          <Badge className="gap-2" variant={"destructive"}>
+            <Clock size={20} /> Pending
+          </Badge>
+        );
       }
       if (value === "accepted") {
-        return <Badge variant={"success"}>Accepted</Badge>;
+        return (
+          <Badge className="gap-2" variant={"success"}>
+            <FolderCheck size={20} /> Accepted
+          </Badge>
+        );
       }
       if (value === "rejected") {
-        return <Badge variant={"warning"}>Rejected</Badge>;
+        return (
+          <Badge className="gap-2" variant={"warning"}>
+            <FolderX size={20} /> Rejected
+          </Badge>
+        );
       }
     },
   },
   {
     accessorKey: "function",
-    header: ({ column }) => <TableSorter column={column} header="FN" />,
+    header: () => null,
     cell: ({ row }) => (
       <Popover>
         <PopoverTrigger>
@@ -57,16 +94,6 @@ export const requestColumn: ColumnDef<RequestType>[] = [
           <Link href={`/requests/${row.original.id}`}>
             <Eye size={20} className="cursor-pointer" />
           </Link>
-          <Link href={`/requests/product-list/${row.original.id}`}>
-            <Pencil size={20} className="cursor-pointer" />
-          </Link>
-          <DeleteDialog
-            params={row.original.id!.toString()}
-            deleteFunction={deleteRequest}
-            queryKey={["alumnis", row.original.id!.toString()]}
-          >
-            <Trash size={20} className="cursor-pointer" />
-          </DeleteDialog>
         </PopoverContent>
       </Popover>
     ),

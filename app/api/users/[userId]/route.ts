@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { hash } from "bcryptjs";
 
 export async function GET(
   request: Request,
@@ -13,6 +14,32 @@ export async function GET(
       },
     });
     return NextResponse.json(result, { status: 200 });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log("Error: ", error.stack);
+    }
+    return NextResponse.json(
+      { message: "Something went wrong!", error },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const { username, email, password } = await req.json();
+
+    const hashedPassword = await hash(password, 10);
+
+    const result = await prisma.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    return NextResponse.json(result, { status: 201 });
   } catch (error) {
     if (error instanceof Error) {
       console.log("Error: ", error.stack);

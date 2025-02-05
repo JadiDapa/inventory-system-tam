@@ -11,8 +11,20 @@ export async function getUserById(id: string) {
   return data;
 }
 
+export async function getUserByUsername(username: string) {
+  const { data } = await axiosInstance.get<UserType>(
+    "/users/username/" + username,
+  );
+  return data;
+}
+
 export async function createUser(values: CreateUserType) {
   const { data } = await axiosInstance.post("/users", values);
+  return data;
+}
+
+export async function updateUser(id: string, values: CreateUserType) {
+  const { data } = await axiosInstance.put("/users/" + id, values);
   return data;
 }
 

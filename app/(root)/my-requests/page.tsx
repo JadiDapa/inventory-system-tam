@@ -6,16 +6,18 @@ import LayoutSwitch from "@/components/Home/LayoutSwitch";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getAllRequests } from "@/lib/networks/request";
+import { getRequestsByUsername } from "@/lib/networks/request";
 import { requestColumn } from "@/lib/columns/request-column";
 import DataTable from "@/components/Home/DataTable";
 import SearchDataTable from "@/components/Home/SearchDataTable";
 import SelectTableFilter from "@/components/Home/SelectTableFilter";
 import { requestStatus } from "@/lib/types/request";
+import { useSession } from "next-auth/react";
 
 export default function RequestPage() {
+  const { data } = useSession();
   const { data: requests } = useQuery({
-    queryFn: getAllRequests,
+    queryFn: () => getRequestsByUsername(data?.user?.username as string),
     queryKey: ["requests"],
   });
 

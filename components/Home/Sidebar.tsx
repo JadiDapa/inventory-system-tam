@@ -10,6 +10,7 @@ import {
   Cctv,
   House,
   LogOut,
+  NotebookPen,
   NotepadText,
   Package,
   PackageOpen,
@@ -17,7 +18,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -28,46 +29,55 @@ const userLink = [
     name: "Dashboard",
     url: "/",
     Icon: House,
+    public: true,
+  },
+  {
+    name: "My Requests",
+    url: "/my-requests",
+    Icon: NotebookPen,
+    public: true,
   },
   {
     name: "Requests",
     url: "/requests",
     Icon: NotepadText,
+    public: false,
   },
   {
     name: "Users",
     url: "/users",
     Icon: Users,
+    public: false,
   },
   {
     name: "Entries",
     url: "/entries",
     Icon: Package,
+    public: false,
   },
   {
     name: "Consumes",
     url: "/consumes",
     Icon: PackageOpen,
+    public: false,
   },
   {
-    name: "Brands",
+    name: "Inventory",
     url: "/brands",
     Icon: Tag,
-  },
-  {
-    name: "Products",
-    url: "/products",
-    Icon: Cctv,
+    public: false,
   },
   {
     name: "Items",
     url: "/items",
     Icon: Boxes,
+    public: false,
   },
 ];
 
 export default function Sidebar() {
   const { isSidebarOpen, closeSidebar } = useSidebarStore();
+  const { data: user } = useSession();
 
   const pathname = usePathname();
 
@@ -83,7 +93,7 @@ export default function Sidebar() {
     <>
       <aside
         className={cn(
-          "box-shadow fixed z-50 min-h-screen w-[280px] space-y-4 overflow-hidden bg-tertiary px-4 py-7 shadow-sm transition-all duration-500",
+          "box-shadow fixed z-50 min-h-screen w-[280px] space-y-3 overflow-hidden bg-tertiary px-4 py-7 shadow-sm transition-all duration-500",
           isSidebarOpen ? "translate-x-0" : "max-lg:-translate-x-full",
         )}
       >
@@ -116,27 +126,30 @@ export default function Sidebar() {
 
         <ScrollArea className="h-[85vh] text-slate-100">
           <Accordion type="single" className="flex flex-col gap-2" collapsible>
-            {userLink.map((item) => (
-              <div key={item.url}>
-                <Link
-                  onClick={closeSidebar}
-                  key={item.url}
-                  href={item.url}
-                  className={cn(
-                    "mt-1 flex w-full items-center justify-between rounded-lg px-5 py-2.5 text-primary duration-300",
-                    pathname === item.url
-                      ? "bg-primary text-tertiary shadow-sm"
-                      : "hover:bg-primary/50 hover:text-tertiary",
-                  )}
-                >
-                  <div className="flex items-center justify-center gap-5">
-                    <item.Icon strokeWidth={1.8} size={24} />
-                    <div className="text-xl">{item.name}</div>
-                  </div>
-                </Link>
-              </div>
-            ))}
-
+            {userLink.map((item) => {
+              if (!item.public && user?.user.role === "employee") return null;
+              return (
+                <div key={item.url}>
+                  <Link
+                    onClick={closeSidebar}
+                    key={item.url}
+                    href={item.url}
+                    className={cn(
+                      "mt-1 flex w-full items-center justify-between rounded-lg px-5 py-2.5 text-primary duration-300",
+                      pathname === item.url
+                        ? "bg-primary text-tertiary shadow-sm"
+                        : "hover:bg-primary/50 hover:text-tertiary",
+                    )}
+                  >
+                    <div className="flex items-center justify-center gap-5">
+                      <item.Icon strokeWidth={1.8} size={24} />
+                      <div className="text-xl">{item.name}</div>
+                    </div>
+                  </Link>
+                </div>
+              );
+            })}
+            <Separator />
             <div
               className={cn(
                 "mt-1 flex h-full w-full cursor-pointer items-center px-5 py-2.5 text-primary duration-300",

@@ -13,8 +13,15 @@ export const requestItemsColumn: ColumnDef<ItemType>[] = [
     ),
   },
   {
-    accessorKey: "code",
+    accessorKey: "product",
     header: ({ column }) => <TableSorter column={column} header="PRODUCT" />,
+    cell: ({ getValue }) => (
+      <div className="capitalize">{getValue() as string}</div>
+    ),
+  },
+  {
+    accessorKey: "brand",
+    header: ({ column }) => <TableSorter column={column} header="BRAND" />,
     cell: ({ getValue }) => (
       <div className="capitalize">{getValue() as string}</div>
     ),

@@ -8,6 +8,13 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
+      include: {
+        Request: {
+          select: {
+            _count: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json(result, { status: 200 });
@@ -22,7 +29,6 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const { username, email, password } = await req.json();
-    console.log(req.json());
 
     const isRegistered = await prisma.user.findUnique({
       where: { email: email },
@@ -42,7 +48,6 @@ export async function POST(req: NextRequest) {
         username,
         email,
         password: hashedPassword,
-        role: "user",
       },
     });
 

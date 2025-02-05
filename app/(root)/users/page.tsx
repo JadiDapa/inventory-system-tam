@@ -5,9 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import LayoutSwitch from "@/components/Home/LayoutSwitch";
 import { Button } from "@/components/ui/button";
 import { getAllUsers } from "@/lib/networks/user";
-import UserTable from "@/components/Home/users/UserTable";
 import { userColumn } from "@/lib/columns/user-column";
 import CreateUserModal from "@/components/Home/users/CreateUserModal";
+import DataTable from "@/components/Home/DataTable";
+import SearchDataTable from "@/components/Home/SearchDataTable";
+import SelectTableFilter from "@/components/Home/SelectTableFilter";
+import { userRoles } from "@/lib/types/user";
 
 export default function UsersPage() {
   const { data: users } = useQuery({
@@ -24,7 +27,7 @@ export default function UsersPage() {
         <div className="">
           <h1 className="text-4xl font-medium">{"User List"}</h1>
           <p className="hidden lg:inline">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+            These are The Users that Use and Operate in This App.
           </p>
         </div>
         <div className="flex items-center gap-4 lg:gap-6">
@@ -41,7 +44,25 @@ export default function UsersPage() {
         </div>
       </div>
 
-      <UserTable columns={userColumn} data={users} />
+      <DataTable
+        columns={userColumn}
+        data={users}
+        filters={(table) => (
+          <div className="grid gap-4 p-4 lg:grid-cols-4 lg:gap-6">
+            <SearchDataTable
+              table={table}
+              column="username"
+              placeholder="Search Username..."
+            />
+            <SelectTableFilter
+              table={table}
+              column="role"
+              placeholder="Select Role..."
+              options={userRoles}
+            />
+          </div>
+        )}
+      />
     </section>
   );
 }
