@@ -1,9 +1,8 @@
 "use client";
 
-import { Download, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import LayoutSwitch from "@/components/Home/LayoutSwitch";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getRequestsByUsername } from "@/lib/networks/request";
@@ -13,6 +12,7 @@ import SearchDataTable from "@/components/Home/SearchDataTable";
 import SelectTableFilter from "@/components/Home/SelectTableFilter";
 import { requestStatus } from "@/lib/types/request";
 import { useSession } from "next-auth/react";
+import ExcelExport from "@/components/Home/ExcelExport";
 
 export default function RequestPage() {
   const { data } = useSession();
@@ -35,15 +35,16 @@ export default function RequestPage() {
         </div>
         <div className="flex items-center gap-4 lg:gap-6">
           <LayoutSwitch />
-          <Button className="h-10 items-center gap-4 bg-tertiary text-primary shadow-sm hover:text-tertiary">
-            <p className="text-lg">Export</p>
-            <Download />
-          </Button>
+          <ExcelExport
+            data={requests}
+            filename={data?.user.username + "-requests-list.xlsx"}
+          />
+
           <Link
             className="flex items-center gap-4 rounded-md bg-primary px-3 py-1.5 text-lg text-tertiary shadow-sm transition hover:bg-tertiary hover:text-primary"
             href="/requests/create"
           >
-            <p className="text-lg">Create Request</p>
+            <p className="text-lg max-sm:hidden">Create Request</p>
 
             <Plus size={24} />
           </Link>

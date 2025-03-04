@@ -35,14 +35,6 @@ export const requestColumn: ColumnDef<RequestType>[] = [
     },
   },
   {
-    accessorKey: "username",
-    accessorFn: (row) => row.username,
-    header: ({ column }) => <TableSorter column={column} header="USERNAME" />,
-    cell: ({ getValue }) => (
-      <div className="font-medium capitalize">{getValue() as string}</div>
-    ),
-  },
-  {
     accessorKey: "reason",
     accessorFn: (row) => row.reason,
     header: ({ column }) => <TableSorter column={column} header="REASON" />,

@@ -17,7 +17,7 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
-import { FadeLoader } from "react-spinners";
+import { ClipLoader } from "react-spinners";
 
 const registerSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -79,7 +79,7 @@ export default function LoginForm() {
                 <FormControl>
                   <Input
                     className="h-10 w-full border-2 border-primary ps-12 lg:h-12"
-                    placeholder="Username"
+                    placeholder="Username or Email"
                     {...field}
                   />
                 </FormControl>
@@ -124,7 +124,7 @@ export default function LoginForm() {
           {isLoading ? (
             <>
               Submitting
-              <FadeLoader />
+              <ClipLoader size={32} color="#fff" />
             </>
           ) : (
             "Login"

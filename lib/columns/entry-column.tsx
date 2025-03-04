@@ -1,5 +1,13 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { EllipsisVertical, Eye, Pencil, Trash } from "lucide-react";
+import {
+  EllipsisVertical,
+  Eye,
+  PackageCheck,
+  PackageOpen,
+  PackageX,
+  Pencil,
+  Trash,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -17,13 +25,9 @@ export const entryColumn: ColumnDef<EntryType>[] = [
   {
     accessorKey: "id",
     accessorFn: (row) => row.id,
-    header: ({ column }) => (
-      <div className="pl-4">
-        <TableSorter column={column} header="#" />
-      </div>
-    ),
+    header: ({ column }) => <TableSorter column={column} header="#" isFirst />,
     cell: ({ getValue }) => (
-      <div className="text-primary">{getValue() as string}</div>
+      <div className="translate-x-4 text-primary">{getValue() as string}</div>
     ),
   },
   {
@@ -45,13 +49,25 @@ export const entryColumn: ColumnDef<EntryType>[] = [
     cell: ({ getValue }) => {
       const value = getValue();
       if (value === "pending") {
-        return <Badge variant={"destructive"}>Pending</Badge>;
+        return (
+          <Badge className="gap-2" variant={"destructive"}>
+            <PackageOpen size={20} /> Pending
+          </Badge>
+        );
       }
       if (value === "confirmed") {
-        return <Badge variant={"success"}>Confirmed</Badge>;
+        return (
+          <Badge className="gap-2" variant={"success"}>
+            <PackageCheck size={20} /> Confirmed
+          </Badge>
+        );
       }
       if (value === "canceled") {
-        return <Badge variant={"warning"}>Canceled</Badge>;
+        return (
+          <Badge className="gap-2" variant={"warning"}>
+            <PackageX size={20} /> Canceled
+          </Badge>
+        );
       }
     },
   },

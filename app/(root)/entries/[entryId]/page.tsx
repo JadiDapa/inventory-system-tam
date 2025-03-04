@@ -13,7 +13,10 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { PDFViewer } from "@react-pdf/renderer";
 import EntryInvoice from "@/components/Home/entries/EntryInvoice";
-import { EntryItemTable } from "@/components/Home/entries/EntryItemTable";
+import DataTable from "@/components/Home/DataTable";
+import SearchDataTable from "@/components/Home/SearchDataTable";
+import { EntryItemType } from "@/lib/types/entry-item";
+import { entryItemColumn } from "@/lib/columns/entry-item-column";
 
 export default function EntryDetail() {
   const { entryId } = useParams();
@@ -130,16 +133,28 @@ export default function EntryDetail() {
           <div className="size-50 relative flex w-full flex-col rounded-md border-[3px] border-dashed lg:size-80">
             <Image
               fill
-              src={entry?.image || "/images/logo-placeholder.jpg"}
+              src={(entry?.image as string) || "/images/logo-placeholder.jpg"}
               className="border-2 border-double object-contain object-center p-1"
-              alt={entry?.image || "/images/logo-placeholder.jpg"}
+              alt={(entry?.image as string) || "/images/logo-placeholder.jpg"}
             />
           </div>
         </div>
       </div>
-      <div className="w-full space-y-3 rounded-xl bg-tertiary p-6">
-        <EntryItemTable entryItems={entry.EntryItem} />
-      </div>
+
+      <DataTable
+        columns={entryItemColumn}
+        title="Entry Items List"
+        data={entry?.EntryItem as EntryItemType[]}
+        filters={(table) => (
+          <div className="grid gap-4 p-4 lg:grid-cols-4 lg:gap-6">
+            <SearchDataTable
+              table={table}
+              column="type"
+              placeholder="Search Item Type..."
+            />
+          </div>
+        )}
+      />
       <PDFViewer width="721" height="500" className="app">
         <EntryInvoice entry={entry} />
       </PDFViewer>

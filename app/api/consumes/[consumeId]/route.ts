@@ -55,6 +55,8 @@ export async function PUT(
 
     const formData = await req.formData();
 
+    const number = formData.get("number") as string;
+    const destination = formData.get("destination") as string;
     const reason = formData.get("reason") as string;
     const status = formData.get("status") as string;
     const detail = formData.get("detail") as string;
@@ -77,6 +79,8 @@ export async function PUT(
       const updatedConsume = await tx.consume.update({
         where: { id: consumeId },
         data: {
+          number: number,
+          destination: destination,
           reason: reason,
           status: status,
           detail: detail,

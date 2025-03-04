@@ -45,8 +45,8 @@ export default function CreateRequest() {
     mutationFn: (values: CreateRequestType) => createRequest(values),
     onSuccess: () => {
       toast.success("Data Created Successfully!");
-      queryClient.invalidateQueries({ queryKey: ["items"] });
-      router.push("/requests");
+      queryClient.invalidateQueries({ queryKey: ["requests"] });
+      router.push("/my-requests");
     },
     onError: () => toast.error("Something Went Wrong!"),
   });

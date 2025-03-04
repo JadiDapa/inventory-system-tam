@@ -27,6 +27,8 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
 
+    const number = formData.get("number") as string;
+    const destination = formData.get("destination") as string;
     const reason = formData.get("reason") as string;
     const status = formData.get("status") as string;
     const detail = formData.get("detail") as string;
@@ -48,6 +50,8 @@ export async function POST(req: NextRequest) {
     const result = await prisma.$transaction(async (tx) => {
       const newConsume = await tx.consume.create({
         data: {
+          number,
+          destination,
           reason,
           status,
           detail,

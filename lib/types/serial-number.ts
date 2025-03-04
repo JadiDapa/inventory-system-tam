@@ -23,3 +23,21 @@ export interface CreateSerialNumberType {
   entryItemId?: string;
   consumeItemId?: string;
 }
+
+export const SerialNumberStatus = [
+  {
+    label: "All Status",
+    value: "all",
+    color: "primary",
+  },
+  {
+    label: "Available",
+    value: "available",
+    color: "green-500",
+  },
+  {
+    label: "Used",
+    value: "used",
+    color: "slate-500",
+  },
+];

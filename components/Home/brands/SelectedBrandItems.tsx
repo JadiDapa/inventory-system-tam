@@ -20,6 +20,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import Link from "next/link";
 
 interface SelectedBrandItemsProps {
   brandSlug: string;
@@ -27,17 +29,19 @@ interface SelectedBrandItemsProps {
 
 interface TransformedData {
   productName: string;
-  productimage?: string | File;
+  productImage?: string | File;
   items: {
     name: string;
-    code: string;
-    quantity: string;
+    id: string;
+    quantity: string | number;
   }[];
 }
 
 export default function SelectedBrandItems({
   brandSlug,
 }: SelectedBrandItemsProps) {
+  const [productFilters, setProductFilters] = useState<string>("");
+
   const { data: items } = useQuery({
     queryFn: () => getItemsByBrand(brandSlug as string),
     queryKey: ["items"],
@@ -58,7 +62,7 @@ export default function SelectedBrandItems({
 
       groupedData[productName].items.push({
         name: item.name,
-        code: item.code,
+        id: item.id,
         quantity: item.quantity || "0",
       });
     });
@@ -66,9 +70,13 @@ export default function SelectedBrandItems({
     return Object.values(groupedData);
   }
 
-  if (!items) return null;
+  const products = transformItemsArrayToProduct(items || []);
 
-  const products = transformItemsArrayToProduct(items);
+  const filteredProducts = products?.filter((product) =>
+    product.productName.toLowerCase().includes(productFilters.toLowerCase()),
+  );
+
+  if (!items) return null;
 
   return (
     <div className="space-y-6 rounded-xl bg-tertiary p-6">
@@ -80,6 +88,7 @@ export default function SelectedBrandItems({
           />
 
           <Input
+            onChange={(e) => setProductFilters(e.target.value)}
             className="h-10 w-full ps-12"
             placeholder="Search Brand Name Here..."
           />
@@ -87,7 +96,7 @@ export default function SelectedBrandItems({
 
         <Select>
           <SelectTrigger className="h-10 w-full bg-tertiary lg:w-[180px]">
-            <SelectValue placeholder="Theme" />
+            <SelectValue placeholder="Content" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="light">Light</SelectItem>
@@ -98,7 +107,7 @@ export default function SelectedBrandItems({
       </div>
       <div className="flex-[2] space-y-3">
         <Accordion type="single" collapsible className="w-full">
-          {products?.map((product) => (
+          {filteredProducts?.map((product) => (
             <AccordionItem
               key={product.productName}
               value={product.productName}
@@ -108,7 +117,8 @@ export default function SelectedBrandItems({
                   <figure className="relative size-28 overflow-hidden rounded-xl border-2">
                     <Image
                       src={
-                        product.productImage || "/images/logo-placeholder.jpg"
+                        (product.productImage as string) ||
+                        "/images/logo-placeholder.jpg"
                       }
                       alt="Trafo Image"
                       fill
@@ -134,16 +144,23 @@ export default function SelectedBrandItems({
               <AccordionContent className="divide-y border-t py-1">
                 <div className="flex items-center py-2">
                   <p className="flex-[2] font-semibold">Product Type</p>
-                  <p className="flex-[2] font-semibold">Code/SN</p>
                   <p className="flex-[1] font-semibold">Quantity</p>
+                  <p className="flex-[1] font-semibold">Detail</p>
                 </div>
                 {product.items.map((item) => (
                   <div key={item.name} className="flex items-center py-2">
                     <p className="flex-[2] text-base">{item.name}</p>
-                    <p className="flex-[2] text-base">{item.code}</p>
                     <p className="flex-[1] text-lg font-semibold text-primary">
                       {item.quantity}
                     </p>
+                    <div className="flex-[1]">
+                      <Link
+                        href={`/items/${item.id}`}
+                        className="cursor-pointer rounded-md bg-primary px-4 py-1 text-tertiary hover:bg-primary/80"
+                      >
+                        Detail
+                      </Link>
+                    </div>
                   </div>
                 ))}
               </AccordionContent>

@@ -140,6 +140,8 @@ model EntryItem {
 
 model Consume {
   id          String        @id @unique @default(cuid())
+  number      String        @default("No Number")
+  destination String        @default("No Destination")
   reason      String
   status      String        @default("pending")
   detail      String?

@@ -13,7 +13,14 @@ export async function GET(
         id: id,
       },
       include: {
-        SerialNumber: true,
+        SerialNumber: {
+          where: {
+            status: { in: ["available", "used"] },
+          },
+          orderBy: {
+            status: "asc", // Sorts alphabetically: "available" first, then "used"
+          },
+        },
       },
     });
     return NextResponse.json(result, { status: 200 });

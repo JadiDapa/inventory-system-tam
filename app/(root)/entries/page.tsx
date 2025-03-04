@@ -1,14 +1,17 @@
 "use client";
 
-import { Download, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import LayoutSwitch from "@/components/Home/LayoutSwitch";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getAllEntries } from "@/lib/networks/entry";
-import EntryTable from "@/components/Home/entries/EntryTable";
 import { entryColumn } from "@/lib/columns/entry-column";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SearchDataTable from "@/components/Home/SearchDataTable";
+import SelectTableFilter from "@/components/Home/SelectTableFilter";
+import { entryStatus } from "@/lib/types/entry";
+import DataTable from "@/components/Home/DataTable";
+import ExcelExport from "@/components/Home/ExcelExport";
 
 export default function EntriesPage() {
   const { data: entries } = useQuery({
@@ -18,14 +21,6 @@ export default function EntriesPage() {
 
   if (!entries) return <div>Loading...</div>;
 
-  const pendingEntries = entries?.filter((entry) => entry.status === "pending");
-  const confirmedEntries = entries?.filter(
-    (entry) => entry.status === "confirmed",
-  );
-  const canceledEntries = entries?.filter(
-    (entry) => entry.status === "canceled",
-  );
-
   return (
     <section className="flex w-full flex-col gap-4 py-6 lg:gap-6">
       {/* Header Title */}
@@ -33,15 +28,14 @@ export default function EntriesPage() {
         <div className="">
           <h1 className="text-4xl font-medium">{"Item's Entry List"}</h1>
           <p className="hidden lg:inline">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+            These are Item Entries Transaction to Add More Item into Inventory
           </p>
         </div>
         <div className="flex items-center gap-4 lg:gap-6">
           <LayoutSwitch />
-          <Button className="h-10 items-center gap-4 bg-tertiary text-primary shadow-sm hover:text-tertiary">
-            <p className="text-lg">Export</p>
-            <Download />
-          </Button>
+
+          <ExcelExport data={entries} filename="entries-list.xlsx" />
+
           <Link href="/entries/create">
             <div className="grid size-10 place-items-center gap-4 rounded-md bg-primary text-lg text-tertiary shadow-sm">
               <Plus size={24} />
@@ -52,40 +46,44 @@ export default function EntriesPage() {
 
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="grid h-24 w-full grid-cols-2 gap-2 bg-tertiary shadow-md lg:h-12 lg:grid-cols-4 lg:gap-4">
-          <TabsTrigger className="data-[state=active]:bg-primary" value="all">
-            All Entries
-          </TabsTrigger>
-          <TabsTrigger
-            className="data-[state=active]:bg-green-500"
-            value="confirmed"
-          >
-            Confirmed
-          </TabsTrigger>
-          <TabsTrigger
-            className="data-[state=active]:bg-slate-500"
-            value="pending"
-          >
-            Pending
-          </TabsTrigger>
-          <TabsTrigger
-            className="data-[state=active]:bg-red-500"
-            value="canceled"
-          >
-            Canceled
-          </TabsTrigger>
+          {entryStatus.map((status) => (
+            <TabsTrigger
+              key={status.value}
+              value={status.value}
+              className={`data-[state=active]:${status.color}`}
+            >
+              {status.label}
+            </TabsTrigger>
+          ))}
         </TabsList>
-        <TabsContent value="all">
-          <EntryTable columns={entryColumn} data={entries} />
-        </TabsContent>
-        <TabsContent value="confirmed">
-          <EntryTable columns={entryColumn} data={confirmedEntries} />
-        </TabsContent>
-        <TabsContent value="pending">
-          <EntryTable columns={entryColumn} data={pendingEntries} />
-        </TabsContent>
-        <TabsContent value="canceled">
-          <EntryTable columns={entryColumn} data={canceledEntries} />
-        </TabsContent>
+
+        {entryStatus.map((status) => (
+          <TabsContent key={status.value} value={status.value}>
+            <DataTable
+              columns={entryColumn}
+              data={
+                status.value === "all"
+                  ? entries
+                  : entries.filter((request) => request.status === status.value)
+              }
+              filters={(table) => (
+                <div className="grid gap-4 p-4 lg:grid-cols-4 lg:gap-6">
+                  <SearchDataTable
+                    table={table}
+                    column="reason"
+                    placeholder="Search Reason..."
+                  />
+                  <SelectTableFilter
+                    table={table}
+                    column="status"
+                    placeholder="Select Status..."
+                    options={entryStatus}
+                  />
+                </div>
+              )}
+            />
+          </TabsContent>
+        ))}
       </Tabs>
     </section>
   );

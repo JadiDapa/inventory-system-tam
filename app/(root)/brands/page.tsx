@@ -12,7 +12,7 @@ export default function Brands() {
         <div className="">
           <h1 className="text-4xl font-medium">Brand List</h1>
           <p className="hidden lg:inline">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci?
+            These Are The List Of Items that Consist in the Inventory
           </p>
         </div>
         <div className="flex items-center gap-4 lg:gap-6">

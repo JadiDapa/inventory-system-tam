@@ -1,55 +1,45 @@
 import { auth } from "./auth";
+import { NextResponse } from "next/server";
 
-export default auth(
-  (req: {
-    auth: any;
-    nextUrl: { origin: string | URL | undefined; pathname: string };
-  }) => {
-    const session = req.auth;
-    const { pathname } = req.nextUrl;
+export default auth((req) => {
+  const session = req.auth;
+  const { pathname } = req.nextUrl;
 
-    const loginUrl = new URL("/login", req.nextUrl.origin);
-    // const adminDashboardUrl = new URL("/admin-dashboard", req.nextUrl.origin);
-    // const dashboardUrl = new URL("/dashboard/data-diri", req.nextUrl.origin);
-    // const homeUrl = new URL("/", req.nextUrl.origin);
+  // Allow access to login and register pages for everyone
+  if (pathname.startsWith("/login") || pathname.startsWith("/register")) {
+    return NextResponse.next();
+  }
 
-    // const protectedApiRoutes = ["/api/vouchers"];
+  // If user is not logged in, redirect them to /login
+  if (!session) {
+    return NextResponse.redirect(new URL("/login", req.nextUrl.origin));
+  }
 
-    if (pathname === "/login" || pathname === "/register") {
-      return;
+  // Get user role
+  const userRole = session.user?.role; // Make sure 'role' exists in session
+
+  if (userRole === "admin") {
+    // Admin can access everything
+    return NextResponse.next();
+  }
+
+  if (userRole === "employee") {
+    // Allowed paths for employees
+    const allowedPaths = ["/", "/my-requests", "/request/create"];
+    const isAllowed = allowedPaths.some((allowedPath) =>
+      pathname.startsWith(allowedPath),
+    );
+
+    if (!isAllowed) {
+      return NextResponse.redirect(new URL("/", req.nextUrl.origin));
     }
-    if (!session) {
-      const loginUrl = new URL("/login", req.nextUrl.origin);
-      return Response.redirect(loginUrl);
-    }
-    return;
-    // const isAccessingAdmin =
-    //   req.nextUrl.pathname.startsWith("/admin-dashboard");
-    // const isAccessingDashboard = req.nextUrl.pathname.startsWith("/dashboard");
+  }
 
-    // const isAccessingAPIAdmin = protectedApiRoutes.includes(
-    //   req.nextUrl.pathname,
-    // );
-
-    // if (isAccessingAPIAdmin && session.user.role !== "admin") {
-    //   return Response.redirect(homeUrl);
-    // }
-
-    // if (isAccessingAdmin && session.user.role !== "admin") {
-    //   return Response.redirect(dashboardUrl);
-    // }
-
-    // if (isAccessingDashboard && session.user.role !== "user") {
-    //   return Response.redirect(adminDashboardUrl);
-    // }
-  },
-);
+  return NextResponse.next();
+});
 
 export const config = {
   matcher: [
-    "/",
-    // "/admin-dashboard",
-    // "/admin-dashboard/:path*",
-    // "/api/vouchers",
+    "/((?!_next/static|_next/image|favicon.ico|api/auth|register|login).*)",
   ],
 };

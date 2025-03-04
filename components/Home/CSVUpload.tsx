@@ -13,13 +13,23 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { getAllItems } from "@/lib/networks/item";
 import { ItemType } from "@/lib/types/item";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Badge } from "../ui/badge";
 
 interface CSVUploadProps {
   onFileUpload: (file: File) => void; // Prop for passing file to parent
 }
 
 export default function CSVUpload({ onFileUpload }: CSVUploadProps) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<InputItem[]>([]);
 
   const { data: items } = useQuery({
     queryFn: getAllItems,
@@ -34,13 +44,13 @@ export default function CSVUpload({ onFileUpload }: CSVUploadProps) {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      onFileUpload(file); // Pass the file to parent component
+      onFileUpload(file);
 
       Papa.parse(file, {
-        header: true, // First row as headers
-        dynamicTyping: true, // Automatically convert data types
+        header: true,
+        dynamicTyping: true,
         complete: (results) => {
-          setData(results.data); // Store parsed data
+          setData(results.data as InputItem[]);
         },
         error: (error) => {
           console.error("Error parsing CSV:", error);
@@ -50,8 +60,8 @@ export default function CSVUpload({ onFileUpload }: CSVUploadProps) {
   };
 
   return (
-    <div className="flex gap-6">
-      <div className="w-[520px] space-y-6">
+    <div className="flex flex-col gap-6 lg:flex-row">
+      <div className="w-full space-y-6 lg:w-[520px]">
         <div className="rounded-md bg-tertiary p-6 shadow-md">
           <p className="text-xl font-medium">Upload CSV File</p>
           <p className="text-sm">{`CSV Format: "ItemName" & "SerialNumber"`}</p>
@@ -111,12 +121,14 @@ export function CSVTable({ data, findItem }: CSVTableProps) {
     return acc;
   }, {});
 
-  const result: GroupedItem[] = Object.entries(grouped).map(
-    ([ItemName, SerialNumbers]) => ({
+  const result: GroupedItem[] = Object.entries(grouped)
+    .map(([ItemName, SerialNumbers]) => ({
       ItemName,
       SerialNumbers,
-    }),
-  );
+    }))
+    .filter((item) => item.ItemName !== "null");
+
+  console.log(result);
 
   return (
     <Table>
@@ -134,10 +146,42 @@ export function CSVTable({ data, findItem }: CSVTableProps) {
             <TableCell>{findItem(row.ItemName)?.Brand.name}</TableCell>
             <TableCell>{findItem(row.ItemName)?.Product.name}</TableCell>
             <TableCell>{findItem(row.ItemName)?.name}</TableCell>
-            <TableCell>
-              {row.SerialNumbers.reduce(
-                (sum, sn) => Number(sum) + Number(sn.quantity),
-                0,
+            <TableCell className="flex w-28 items-center justify-between lg:w-44">
+              <p>
+                {row.SerialNumbers.reduce(
+                  (sum, sn) => Number(sum) + Number(sn.quantity),
+                  0,
+                )}
+              </p>
+
+              {row.SerialNumbers.find((sn) => sn.number !== null) && (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Badge>Detail</Badge>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>
+                        Serial Number : {findItem(row.ItemName)?.name}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-2">
+                      {row.SerialNumbers.map((sn, index) => (
+                        <div key={sn.number} className="flex gap-2">
+                          <p className="w-4 font-medium">{index + 1}.</p>
+                          <p className="">{sn.number}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <DialogFooter className="sm:justify-start">
+                      <DialogClose asChild>
+                        <Button type="button" variant="outline">
+                          Close
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               )}
             </TableCell>
           </TableRow>

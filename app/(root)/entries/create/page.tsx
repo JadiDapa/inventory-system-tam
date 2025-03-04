@@ -99,8 +99,10 @@ export default function CreateEntry() {
         >
           <header className="items-center justify-between lg:flex">
             <div className="">
-              <h1 className="text-2xl font-medium">Create a New Items</h1>
-              <p className="mt-1 text-gray-400">Create a New Items to Store</p>
+              <h1 className="text-2xl font-medium">Create a New Item Entry</h1>
+              <p className="mt-1 text-gray-400">
+                Create an Entry to Add More Item Stocks to Inventory
+              </p>
             </div>
             <div className="mt-6 flex justify-end gap-4 lg:mt-0 lg:justify-start">
               <Button variant="default" type="submit" className="gap-2">
@@ -109,9 +111,9 @@ export default function CreateEntry() {
               </Button>
             </div>
           </header>
-          <div className="flex gap-6">
+          <div className="flex flex-col gap-6 lg:flex-row">
             <div className="grid w-full flex-col flex-wrap gap-6 rounded-md bg-tertiary p-6 shadow-md lg:flex-row">
-              <h2 className="text-xl font-medium">Item Details</h2>
+              <h2 className="text-xl font-medium">Entry Information</h2>
               <FormField
                 control={form.control}
                 name="reason"
@@ -147,7 +149,7 @@ export default function CreateEntry() {
               />
             </div>
             <div className="space-y-2 rounded-md bg-tertiary p-6 shadow-md">
-              <h2 className="font-medium">{"Item's Picture"}</h2>
+              <h2 className="font-medium">{"Entry Evidence"}</h2>
 
               <div className="flex flex-col gap-6 lg:flex-row">
                 {pictureUrl ? (

@@ -11,9 +11,12 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { CreateConsumeType } from "@/lib/types/consume";
-import { ConsumeItemTable } from "@/components/Home/consumes/ConsumeItemTable";
 import { PDFViewer } from "@react-pdf/renderer";
-import EntryInvoice from "@/components/Home/entries/EntryInvoice";
+import ConsumeInvoice from "@/components/Home/consumes/ConsumeInvoice";
+import DataTable from "@/components/Home/DataTable";
+import SearchDataTable from "@/components/Home/SearchDataTable";
+import { consumeItemColumn } from "@/lib/columns/consume-item-column";
+import { ConsumeItemType } from "@/lib/types/consume-item";
 
 export default function ConsumeDetail() {
   const { consumeId } = useParams();
@@ -38,6 +41,8 @@ export default function ConsumeDetail() {
 
   async function handleConsume(status: string) {
     onUpdateConsume({
+      number: consume!.number,
+      destination: consume!.destination,
       reason: consume!.reason,
       status: status,
       detail: consume!.detail,
@@ -64,25 +69,31 @@ export default function ConsumeDetail() {
                 onClick={() => handleConsume("confirmed")}
                 className="h-10 items-center gap-4 bg-green-500 text-tertiary shadow-sm hover:bg-tertiary hover:text-green-500"
               >
-                <p className="text-lg">Confirm Consume</p>
-                <FolderCheck />
+                <p className="text-lg">
+                  Confirm <span className="hidden lg:inline">Consume</span>
+                </p>
+                <FolderCheck className="hidden lg:block" />
               </Button>
               <Button
                 onClick={() => handleConsume("canceled")}
                 className="h-10 items-center gap-4 bg-red-500 text-tertiary shadow-sm hover:bg-tertiary hover:text-red-500"
               >
-                <p className="text-lg">Cancel Consume</p>
-                <FolderX />
+                <p className="text-lg">
+                  Cancel <span className="hidden lg:inline">Consume</span>
+                </p>
+                <FolderX className="hidden lg:block" />
               </Button>
             </>
           )}
           <Button className="h-10 items-center gap-4 bg-tertiary text-primary shadow-sm hover:text-tertiary">
-            <p className="text-lg">Print Document</p>
+            <p className="text-lg">
+              Print <span className="hidden lg:inline">Document</span>
+            </p>
             <Download />
           </Button>
         </div>
       </div>
-      <div className="flex w-full gap-6">
+      <div className="flex w-full flex-col gap-6 lg:flex-row">
         <div className="w-full space-y-3 rounded-xl bg-tertiary p-6">
           <div className="mb-6 flex items-start justify-between">
             <h2 className="text-xl font-medium">Consume Informations</h2>
@@ -118,6 +129,16 @@ export default function ConsumeDetail() {
             )}
           </div>
           <div className="">
+            <p className="text-lg font-medium text-primary">
+              Identifier Number :{" "}
+            </p>
+            <p>{consume?.number}</p>
+          </div>
+          <div className="">
+            <p className="text-lg font-medium text-primary">destination : </p>
+            <p>{consume?.destination}</p>
+          </div>
+          <div className="">
             <p className="text-lg font-medium text-primary">Reason : </p>
             <p>{consume?.reason}</p>
           </div>
@@ -130,18 +151,29 @@ export default function ConsumeDetail() {
           <div className="size-50 relative flex w-full flex-col rounded-md border-[3px] border-dashed lg:size-80">
             <Image
               fill
-              src={consume?.image || "/images/logo-placeholder.jpg"}
+              src={(consume?.image as string) || "/images/logo-placeholder.jpg"}
               className="border-2 border-double object-contain object-center p-1"
-              alt={consume?.image || "/images/logo-placeholder.jpg"}
+              alt={(consume?.image as string) || "/images/logo-placeholder.jpg"}
             />
           </div>
         </div>
       </div>
-      <div className="w-full space-y-3 rounded-xl bg-tertiary p-6">
-        <ConsumeItemTable consumeItems={consume.ConsumeItem} />
-      </div>
+      <DataTable
+        columns={consumeItemColumn}
+        title="Consume Items List"
+        data={consume?.ConsumeItem as ConsumeItemType[]}
+        filters={(table) => (
+          <div className="grid gap-4 p-4 lg:grid-cols-4 lg:gap-6">
+            <SearchDataTable
+              table={table}
+              column="type"
+              placeholder="Search Item Type..."
+            />
+          </div>
+        )}
+      />
       <PDFViewer width="721" height="500" className="app">
-        <EntryInvoice entry={consume} />
+        <ConsumeInvoice consume={consume} />
       </PDFViewer>
     </section>
   );

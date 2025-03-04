@@ -90,7 +90,6 @@ export async function PUT(
         });
 
         for (const entryItem of entryItems) {
-          // Update item quantity
           await tx.item.update({
             where: { id: entryItem.itemId },
             data: {
@@ -98,14 +97,11 @@ export async function PUT(
             },
           });
 
-          // Mark serial numbers as confirmed
           await tx.serialNumber.updateMany({
             where: { entryItemId: entryItem.id },
             data: { status: "available" },
           });
         }
-      } else if (status === "canceled") {
-        // Cancel Entry Item
       }
 
       return updatedEntry;

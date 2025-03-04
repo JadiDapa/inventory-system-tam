@@ -13,12 +13,19 @@ import { Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getAllBrands } from "@/lib/networks/brand";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function BrandList() {
+  const [brandFilters, setBrandFilters] = useState<string>("");
+
   const { data: brands } = useQuery({
     queryFn: getAllBrands,
     queryKey: ["brands"],
   });
+
+  const filteredBrands = brands?.filter((brand) =>
+    brand.name.toLowerCase().includes(brandFilters.toLowerCase()),
+  );
 
   return (
     <div className="h-full w-full space-y-4 lg:space-y-6 lg:rounded-lg lg:bg-tertiary lg:p-4 lg:shadow-md">
@@ -30,6 +37,7 @@ export default function BrandList() {
           />
 
           <Input
+            onChange={(e) => setBrandFilters(e.target.value)}
             className="h-10 w-full ps-12"
             placeholder="Search Brand Name Here..."
           />
@@ -37,7 +45,7 @@ export default function BrandList() {
 
         <Select>
           <SelectTrigger className="h-10 w-full bg-tertiary lg:w-[180px]">
-            <SelectValue placeholder="Theme" />
+            <SelectValue placeholder="Model" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="light">Light</SelectItem>
@@ -47,8 +55,8 @@ export default function BrandList() {
         </Select>
       </div>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-        {brands &&
-          brands.map((brand, index) => (
+        {filteredBrands &&
+          filteredBrands.map((brand, index) => (
             <Link key={index} href={`/brands/${brand.slug}`}>
               <BrandCard
                 key={index}

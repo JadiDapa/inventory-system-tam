@@ -13,9 +13,11 @@ import { useRouter } from "next/navigation";
 import { getRequestById, updateRequest } from "@/lib/networks/request";
 import ItemRequestTable from "@/components/Home/requests/ItemRequestTable";
 import { itemRequestColumn } from "@/lib/columns/item-request-column";
+import { useSession } from "next-auth/react";
 
 export default function RequestDetail() {
   const { requestId } = useParams();
+  const { data: user } = useSession();
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -23,8 +25,6 @@ export default function RequestDetail() {
     queryFn: () => getRequestById(requestId as string),
     queryKey: ["requests", requestId],
   });
-
-  console.log(request);
 
   const { mutate: onUpdateRequest } = useMutation({
     mutationFn: (values: CreateRequestType) =>
@@ -59,7 +59,7 @@ export default function RequestDetail() {
           </p>
         </div>
         <div className="flex items-center gap-4 lg:gap-6">
-          {request.status === "pending" && (
+          {(request.status === "pending" || user?.user.role === "admin") && (
             <>
               <Button
                 onClick={() => handleRequest("accepted")}
@@ -123,7 +123,7 @@ export default function RequestDetail() {
             <p>{request?.reason}</p>
           </div>
           <div className="">
-            <p className="text-lg font-medium text-primary">Detai : </p>
+            <p className="text-lg font-medium text-primary">Detail : </p>
             <p>{request?.detail || "No detail provided"}</p>
           </div>
         </div>

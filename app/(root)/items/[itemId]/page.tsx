@@ -9,7 +9,11 @@ import { deleteProduct } from "@/lib/networks/product";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getItemById } from "@/lib/networks/item";
-import ItemSerialNumbers from "@/components/Home/items/ItemSerialNumbers";
+import DataTable from "@/components/Home/DataTable";
+import SearchDataTable from "@/components/Home/SearchDataTable";
+import SelectTableFilter from "@/components/Home/SelectTableFilter";
+import { serialItemColumn } from "@/lib/columns/serial-item-column";
+import { SerialNumberStatus } from "@/lib/types/serial-number";
 
 export default function ItemDetail() {
   const { itemId } = useParams();
@@ -55,7 +59,25 @@ export default function ItemDetail() {
           </DeleteDialog>
         </div>
       </div>
-      <ItemSerialNumbers itemId={itemId as string} />
+      <DataTable
+        columns={serialItemColumn}
+        data={item.SerialNumber}
+        filters={(table) => (
+          <div className="grid gap-4 p-4 lg:grid-cols-4 lg:gap-6">
+            <SearchDataTable
+              table={table}
+              column="number"
+              placeholder="Search Serial Number..."
+            />
+            <SelectTableFilter
+              table={table}
+              column="status"
+              placeholder="Select Status..."
+              options={SerialNumberStatus}
+            />
+          </div>
+        )}
+      />
     </section>
   );
 }

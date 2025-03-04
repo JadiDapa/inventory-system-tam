@@ -17,20 +17,26 @@ export const consumeColumn: ColumnDef<ConsumeType>[] = [
   {
     accessorKey: "id",
     accessorFn: (row) => row.id,
-    header: ({ column }) => (
-      <div className="pl-4">
-        <TableSorter column={column} header="#" />
-      </div>
+    header: ({ column }) => <TableSorter column={column} header="#" isFirst />,
+    cell: ({ getValue }) => (
+      <div className="translate-x-4 text-primary">{getValue() as string}</div>
     ),
+  },
+  {
+    accessorKey: "number",
+    accessorFn: (row) => row.number,
+    header: ({ column }) => <TableSorter column={column} header="NUMBER" />,
     cell: ({ getValue }) => (
       <div className="text-primary">{getValue() as string}</div>
     ),
   },
   {
-    accessorKey: "reason",
-    accessorFn: (row) => row.reason,
-    header: ({ column }) => <TableSorter column={column} header="REASON" />,
-    cell: ({ getValue }) => <Link href={""}>{getValue() as string}</Link>,
+    accessorKey: "destination",
+    accessorFn: (row) => row.destination,
+    header: ({ column }) => (
+      <TableSorter column={column} header="DESTINATION" />
+    ),
+    cell: ({ getValue }) => <div>{getValue() as string}</div>,
   },
   {
     accessorKey: "quantity",

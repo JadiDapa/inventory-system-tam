@@ -19,3 +19,26 @@ export interface CreateEntryType {
   image?: string | File;
   csvFile: string | File;
 }
+
+export const entryStatus = [
+  {
+    label: "All Entries",
+    value: "all",
+    color: "primary",
+  },
+  {
+    label: "Confirmed",
+    value: "confirmed",
+    color: "green-500",
+  },
+  {
+    label: "Pending",
+    value: "pending",
+    color: "slate-500",
+  },
+  {
+    label: "Canceled",
+    value: "canceled",
+    color: "red-500",
+  },
+];

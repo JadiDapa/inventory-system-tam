@@ -15,7 +15,7 @@ export default function BrandCard({ name, image, totalItems }: BrandCardProps) {
     <Card className="w-full cursor-pointer overflow-hidden rounded-lg border bg-tertiary">
       <CardHeader className="relative h-40 w-full bg-white p-0 lg:h-48">
         <Image
-          src={image || "/images/logo-placeholder.jpg"}
+          src={(image as string) || "/images/logo-placeholder.jpg"}
           alt={`${name} logo`}
           fill
           className="rounded-lg border-b object-contain object-center"

@@ -14,6 +14,8 @@ export async function getConsumeById(id: string) {
 export async function createConsume(values: CreateConsumeType) {
   const formData = new FormData();
 
+  formData.append("number", values.number);
+  formData.append("destination", values.destination);
   formData.append("reason", values.reason);
   formData.append("status", values.status);
   formData.append("detail", values.detail || "");
@@ -31,6 +33,8 @@ export async function createConsume(values: CreateConsumeType) {
 export async function updateConsume(id: string, values: CreateConsumeType) {
   const formData = new FormData();
 
+  formData.append("number", values.number);
+  formData.append("destination", values.destination);
   formData.append("reason", values.reason);
   formData.append("status", values.status);
   formData.append("detail", values.detail || "");

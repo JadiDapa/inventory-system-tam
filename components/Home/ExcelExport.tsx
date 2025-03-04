@@ -1,7 +1,7 @@
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { Button } from "../ui/button";
-import { Upload } from "lucide-react";
+import { Download } from "lucide-react";
 
 interface ExcelExportProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,10 +30,10 @@ export default function ExcelExport({ data, filename }: ExcelExportProps) {
   return (
     <Button
       onClick={exportToExcel}
-      className="flex w-full items-center justify-center gap-2 rounded-md border border-primary bg-transparent text-primary hover:text-white"
+      className="h-10 items-center gap-4 bg-tertiary text-primary shadow-sm hover:text-tertiary"
     >
-      <Upload size={20} strokeWidth={2.25} />
-      <div className="">Export Data</div>
+      <p className="text-lg">Export</p>
+      <Download />
     </Button>
   );
 }

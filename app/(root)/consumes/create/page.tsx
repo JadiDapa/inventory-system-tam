@@ -26,7 +26,9 @@ import { Textarea } from "@/components/ui/textarea";
 import CSVUpload from "@/components/Home/CSVUpload";
 
 const itemSchema = z.object({
-  reason: z.string().min(1, "Item Name is required"),
+  number: z.string().min(1, "Consume Number is required"),
+  destination: z.string().min(1, "Destination is required"),
+  reason: z.string().min(1, "Reason of Consume is required"),
   detail: z.string().optional(),
 });
 
@@ -63,6 +65,8 @@ export default function CreateConsume() {
   const form = useForm<z.infer<typeof itemSchema>>({
     resolver: zodResolver(itemSchema),
     defaultValues: {
+      number: "",
+      destination: "",
       reason: "",
       detail: "",
     },
@@ -111,9 +115,37 @@ export default function CreateConsume() {
               </Button>
             </div>
           </header>
-          <div className="flex gap-6">
+          <div className="flex flex-col gap-6 lg:flex-row">
             <div className="grid w-full flex-col flex-wrap gap-6 rounded-md bg-tertiary p-6 shadow-md lg:flex-row">
-              <h2 className="text-xl font-medium">Item Details</h2>
+              <h2 className="text-xl font-medium">Consume Item Details</h2>
+              <div className="flex flex-1 flex-col items-center gap-6 lg:flex-row">
+                <FormField
+                  control={form.control}
+                  name="number"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Number Identifier</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ex: John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="destination"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Destination&lsquo;s Consume</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ex: John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
                 name="reason"
@@ -149,7 +181,7 @@ export default function CreateConsume() {
               />
             </div>
             <div className="space-y-2 rounded-md bg-tertiary p-6 shadow-md">
-              <h2 className="font-medium">{"Item's Picture"}</h2>
+              <h2 className="font-medium">{"Consume's Evidence"}</h2>
 
               <div className="flex flex-col gap-6 lg:flex-row">
                 {pictureUrl ? (

@@ -7,12 +7,10 @@ export const itemColumn: ColumnDef<ItemType>[] = [
   {
     accessorKey: "id",
     accessorFn: (row) => row.id,
-    header: ({ column }) => (
-      <div className="pl-4">
-        <TableSorter column={column} header="#" />
-      </div>
+    header: ({ column }) => <TableSorter isFirst column={column} header="#" />,
+    cell: ({ row }) => (
+      <div className="translate-x-4 text-primary">{row.index + 1}</div>
     ),
-    cell: ({ row }) => <div className="ml-4 text-primary">{row.index + 1}</div>,
   },
   {
     accessorKey: "brand",

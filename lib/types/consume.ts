@@ -2,6 +2,8 @@ import { ConsumeItemType } from "./consume-item";
 
 export interface ConsumeType {
   id: string;
+  number: string;
+  destination: string;
   reason: string;
   status: string;
   detail?: string;
@@ -13,6 +15,8 @@ export interface ConsumeType {
 }
 
 export interface CreateConsumeType {
+  number: string;
+  destination: string;
   reason: string;
   status: string;
   detail?: string;
