@@ -1,27 +1,28 @@
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Boxes, Tag } from "lucide-react";
+import { Boxes } from "lucide-react";
 import Link from "next/link";
 
 interface ProductCardProps {
   name: string;
   slug: string;
   image?: string | File;
-  detail?: string;
+  total?: string;
 }
 
-export default function ProductCard({ name, slug, image }: ProductCardProps) {
+export default function ProductCard({
   name,
   slug,
   image,
-  totalItems,
+  total,
+}: ProductCardProps) {
   return (
     <Link href={`/products/${slug}`}>
       <Card className="w-full cursor-pointer overflow-hidden rounded-lg border bg-tertiary">
         <CardHeader className="relative h-40 w-full p-0 lg:h-48">
           <Image
-            src={image || "/images/logo-placeholder.jpg"}
+            src={(image as string) || "/images/logo-placeholder.jpg"}
             alt={`${name} logo`}
             fill
             className="rounded-lg border-b object-contain object-center"

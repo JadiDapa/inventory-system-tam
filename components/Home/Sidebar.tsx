@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import useSidebarStore from "@/stores/SidebarStore";
 import {
   Boxes,
-  Cctv,
   House,
   LogOut,
   NotebookPen,

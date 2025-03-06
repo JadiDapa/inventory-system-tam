@@ -21,7 +21,7 @@ export default function LoginPage() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [images.length]);
 
   return (
     <section className="grid min-h-screen grid-cols-1 overflow-hidden lg:grid-cols-2">
