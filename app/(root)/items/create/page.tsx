@@ -32,8 +32,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import CreateBrandModal from "@/components/Home/brands/CreateBrandModal";
-import CreateProductModal from "@/components/Home/products/CreateProductModal";
+import Link from "next/link";
 
 const itemSchema = z.object({
   name: z.string().min(1, "Item Name is required"),
@@ -158,12 +157,13 @@ export default function CreateItems() {
                               {brand.name}
                             </SelectItem>
                           ))}
-                          <CreateBrandModal>
-                            <div className="flex items-center gap-2 py-1.5 pl-2 pr-8 text-sm">
-                              <p>Create New Brand</p>
-                              <Plus className="size-4" />
-                            </div>
-                          </CreateBrandModal>
+                          <Link
+                            href="/brands"
+                            className="flex items-center gap-2 py-1.5 pl-2 pr-8 text-sm"
+                          >
+                            <p>Create New Brand</p>
+                            <Plus className="size-4" />
+                          </Link>
                         </SelectContent>
                       </Select>
 
@@ -192,12 +192,13 @@ export default function CreateItems() {
                               {product.name}
                             </SelectItem>
                           ))}
-                          <CreateProductModal>
-                            <div className="flex items-center gap-2 py-1.5 pl-2 pr-8 text-sm">
-                              <p>Create New Product</p>
-                              <Plus className="size-4" />
-                            </div>
-                          </CreateProductModal>
+                          <Link
+                            href="/products"
+                            className="flex items-center gap-2 py-1.5 pl-2 pr-8 text-sm"
+                          >
+                            <p>Create New Product</p>
+                            <Plus className="size-4" />
+                          </Link>
                         </SelectContent>
                       </Select>
 

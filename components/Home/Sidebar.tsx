@@ -61,8 +61,14 @@ const userLink = [
     public: false,
   },
   {
-    name: "Inventory",
+    name: "Brands",
     url: "/brands",
+    Icon: Tag,
+    public: false,
+  },
+  {
+    name: "Products",
+    url: "/products",
     Icon: Tag,
     public: false,
   },
